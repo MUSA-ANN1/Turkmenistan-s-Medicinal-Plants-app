@@ -34,6 +34,8 @@ public class AboutUs extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_about_us);
 
+        getWindow().setStatusBarColor(getColor(R.color.main_green));
+        getWindow().setNavigationBarColor(getColor(R.color.main_green));
 
         drawerLayout = findViewById(R.id.drawer_layout);
         navigationView = findViewById(R.id.navigation_view);

@@ -26,6 +26,8 @@ public class AboutApp extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_about_app);
 
+        getWindow().setStatusBarColor(getColor(R.color.main_green));
+        getWindow().setNavigationBarColor(getColor(R.color.main_green));
 
         drawerLayout = findViewById(R.id.drawer_layout);
         navigationView = findViewById(R.id.navigation_view);
