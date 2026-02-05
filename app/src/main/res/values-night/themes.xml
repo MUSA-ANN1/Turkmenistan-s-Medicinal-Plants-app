@@ -1,0 +1,31 @@
+<!--
+<resources xmlns:tools="http://schemas.android.com/tools">
+
+    <style name="Base.Theme.Kitaphana" parent="Theme.Material3.DayNight.NoActionBar">
+&lt;!&ndash;        <item name="colorControlActivated">@color/main_green</item>
+        <item name="android:statusBarColor">@color/main_green</item>
+        <item name="android:navigationBarColor">@color/main_green</item>&ndash;&gt;
+        <item name="android:src">#DADDE2</item>
+    </style>
+
+    <style name="Theme.Kitaphana" parent="Base.Theme.Kitaphana" />
+</resources>
+-->
+
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <style name="Base.Theme.Kitaphana" parent="Theme.Material3.DayNight.NoActionBar">
+        <item name="colorControlActivated">@color/main_green</item>
+        <item name="android:src">#303633</item>
+        <item name="android:statusBarColor">@color/main_green</item>
+        <item name="android:navigationBarColor">@color/main_green</item>
+    </style>
+
+    <style name="Theme.Kitaphana" parent="Base.Theme.Kitaphana" />
+
+    <!-- Specific theme for Splash to avoid the grey flash -->
+    <style name="Theme.App.Launcher" parent="Theme.AppCompat.NoActionBar">
+        <item name="android:windowBackground">@color/app_icon_c</item>
+        <item name="android:statusBarColor">@color/app_icon_c</item>
+        <item name="android:navigationBarColor">@color/app_icon_c</item>
+    </style>
+</resources>

@@ -1,0 +1,347 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.drawerlayout.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/drawer_layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".AboutUs">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/main"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/main_green">
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <LinearLayout
+            android:id="@+id/linearLayout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="125dp"
+                android:background="@drawable/tegelek"
+                android:gravity="bottom"
+                android:orientation="horizontal"
+                android:paddingStart="11dp"
+                android:paddingEnd="11dp"
+                android:paddingBottom="15dp">
+
+
+                <!--<androidx.cardview.widget.CardView
+                    android:layout_width="105dp"
+                    android:layout_height="50dp"
+                    android:layout_marginTop="7dp"
+                    android:layout_marginEnd="7dp"
+                    android:layout_marginBottom="7dp"
+                    android:layout_weight="1"
+                    android:backgroundTint="@color/whitish_green"
+                    app:cardCornerRadius="12dp"
+                    android:id="@+id/imageViewFilter">
+
+                    <ImageView
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_margin="12dp"
+                        android:src="@drawable/filtr"
+                        app:tint="@color/main_green"/>
+
+                </androidx.cardview.widget.CardView>-->
+
+            </LinearLayout>
+
+            <ScrollView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="10dp"
+                    android:orientation="vertical"
+                    android:paddingBottom="38dp">
+
+                    <TextView
+                        android:id="@+id/kitap"
+                        android:layout_width="match_parent"
+                        android:layout_height="30dp"
+                        android:layout_margin="5dp"
+                        android:fontFamily="@font/framd"
+                        android:gravity="bottom"
+                        android:paddingLeft="10dp"
+                        android:text="@string/about_usTM"
+                        android:textColor="@color/kitaplar"
+                        android:textSize="25dp" />
+
+                    <TextView
+                        android:id="@+id/about_app_ex"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="5dp"
+                        android:fontFamily="@font/framd"
+                        android:gravity="bottom"
+                        android:paddingLeft="10dp"
+                        android:text="@string/about_us_exTM"
+                        android:textColor="@color/kitaplar"
+                        android:textSize="20dp" />
+
+                    <HorizontalScrollView
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_marginBottom="10dp">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="15dp"
+                            android:orientation="vertical">
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:orientation="horizontal">
+
+                                <androidx.cardview.widget.CardView
+                                    android:id="@+id/profile1"
+                                    android:layout_width="160dp"
+                                    android:layout_height="227dp"
+                                    android:layout_marginEnd="10dp"
+                                    android:backgroundTint="@color/main_green"
+                                    app:cardCornerRadius="11dp">
+
+                                    <LinearLayout
+                                        android:layout_width="match_parent"
+                                        android:layout_height="match_parent"
+                                        android:layout_gravity="center"
+                                        android:gravity="center"
+                                        android:orientation="vertical">
+
+                                        <ImageView
+                                            android:layout_width="100dp"
+                                            android:layout_height="100dp"
+                                            android:layout_marginTop="10dp"
+                                            android:src="@drawable/moses" />
+
+                                        <TextView
+                                            android:id="@+id/moses"
+                                            android:layout_width="match_parent"
+                                            android:layout_height="wrap_content"
+                                            android:layout_margin="10dp"
+                                            android:fontFamily="@font/framd"
+                                            android:gravity="top|center"
+                                            android:text="Musa Annagulyýew\n\n\n◦ Android Software Engineer\n\n◦ UI/UX designer"
+                                            android:textColor="@color/whitish_green"
+                                            android:textSize="11dp" />
+
+                                    </LinearLayout>
+
+                                </androidx.cardview.widget.CardView>
+
+                                <androidx.cardview.widget.CardView
+                                    android:id="@+id/profile2"
+                                    android:layout_width="160dp"
+                                    android:layout_height="227dp"
+                                    android:layout_marginEnd="10dp"
+                                    android:backgroundTint="@color/main_green"
+                                    app:cardCornerRadius="11dp">
+
+                                    <LinearLayout
+                                        android:layout_width="match_parent"
+                                        android:layout_height="match_parent"
+                                        android:layout_gravity="center"
+                                        android:gravity="center"
+                                        android:orientation="vertical">
+
+                                        <ImageView
+                                            android:layout_width="100dp"
+                                            android:layout_height="100dp"
+                                            android:layout_marginTop="10dp"
+                                            android:src="@drawable/surai" />
+
+                                        <TextView
+                                            android:id="@+id/surai"
+                                            android:layout_width="match_parent"
+                                            android:layout_height="wrap_content"
+                                            android:layout_margin="10dp"
+                                            android:fontFamily="@font/framd"
+                                            android:gravity="top|center"
+                                            android:text="Suraý Annagulyýewa\n\n\n◦ Creative UI / UX Designer\n\n◦ Visual Design Architect"
+                                            android:textColor="@color/whitish_green"
+                                            android:textSize="11dp" />
+
+                                    </LinearLayout>
+
+                                </androidx.cardview.widget.CardView>
+
+                                <androidx.cardview.widget.CardView
+                                    android:id="@+id/profile3"
+                                    android:layout_width="160dp"
+                                    android:layout_height="227dp"
+                                    android:layout_marginEnd="25dp"
+                                    android:backgroundTint="@color/main_green"
+                                    app:cardCornerRadius="11dp">
+
+                                    <LinearLayout
+                                        android:layout_width="match_parent"
+                                        android:layout_height="match_parent"
+                                        android:layout_gravity="center"
+                                        android:gravity="center"
+                                        android:orientation="vertical">
+
+                                        <ImageView
+                                            android:layout_width="100dp"
+                                            android:layout_height="100dp"
+                                            android:layout_marginTop="10dp"
+                                            android:src="@drawable/smile" />
+
+                                        <TextView
+                                            android:id="@+id/smile"
+                                            android:layout_width="match_parent"
+                                            android:layout_height="wrap_content"
+                                            android:layout_margin="10dp"
+                                            android:fontFamily="@font/framd"
+                                            android:gravity="top|center"
+                                            android:text="Ysmaýyl Mämmetgeldiýew\n\n\n◦ Network &amp; Systems Engineer\n\n◦ Infrastructure Specialist"
+                                            android:textColor="@color/whitish_green"
+                                            android:textSize="11dp" />
+
+                                    </LinearLayout>
+
+                                </androidx.cardview.widget.CardView>
+                            </LinearLayout>
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:orientation="horizontal"
+                                android:layout_marginTop="5dp">
+
+                                <androidx.cardview.widget.CardView
+                                    android:id="@+id/profile1ac"
+                                    android:layout_width="160dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginEnd="10dp"
+                                    android:backgroundTint="@color/main_green"
+                                    app:cardCornerRadius="11dp">
+
+                                    <LinearLayout
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:orientation="horizontal"
+                                        android:gravity="center">
+
+                                        <ImageView
+                                            android:layout_width="25dp"
+                                            android:layout_height="25dp"
+                                            android:src="@drawable/github"/>
+
+                                        <TextView
+                                            android:id="@+id/moses_ac"
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:layout_margin="10dp"
+                                            android:fontFamily="@font/framd"
+                                            android:gravity="top|center"
+                                            android:text="MUSA-ANN1"
+                                            android:textColor="@color/whitish_green"
+                                            android:textSize="11dp"
+                                            android:linksClickable="true"
+                                            android:autoLink="web"
+                                            android:textColorLink="@color/whitish_green"/>
+
+                                    </LinearLayout>
+
+                                </androidx.cardview.widget.CardView>
+
+                                <View
+                                    android:layout_height="0dp"
+                                    android:layout_width="160dp"
+                                    android:layout_marginEnd="10dp"/>
+
+                                <androidx.cardview.widget.CardView
+                                    android:id="@+id/profile3ac"
+                                    android:layout_width="160dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginEnd="25dp"
+                                    android:backgroundTint="@color/main_green"
+                                    app:cardCornerRadius="11dp">
+
+                                    <LinearLayout
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:orientation="horizontal"
+                                        android:gravity="center">
+
+                                        <ImageView
+                                            android:layout_width="25dp"
+                                            android:layout_height="25dp"
+                                            android:src="@drawable/github"/>
+
+                                        <TextView
+                                            android:id="@+id/smile_ac"
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:layout_margin="10dp"
+                                            android:fontFamily="@font/framd"
+                                            android:gravity="top|center"
+                                            android:text="smile-web-tech"
+                                            android:textColor="@color/whitish_green"
+                                            android:textSize="11dp"
+                                            android:linksClickable="true"
+                                            android:autoLink="web"
+                                            android:textColorLink="@color/whitish_green"/>
+
+                                    </LinearLayout>
+
+                                </androidx.cardview.widget.CardView>
+
+                            </LinearLayout>
+
+                        </LinearLayout>
+                    </HorizontalScrollView>
+
+
+                </LinearLayout>
+            </ScrollView>
+
+        </LinearLayout>
+
+        <ImageView
+            android:id="@+id/burger_icon"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_marginStart="18dp"
+            android:layout_marginTop="35dp"
+            android:contentDescription="Menu"
+            android:src="@drawable/burger_icon"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:tint="@color/whitish_green" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <com.google.android.material.navigation.NavigationView
+        android:id="@+id/navigation_view"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_gravity="start"
+        android:background="@color/main_green"
+        app:headerLayout="@layout/drawer_header"
+        app:itemBackground="@drawable/drawer_item_background"
+        app:itemIconTint="@color/whitish_green"
+        app:itemTextColor="@color/whitish_green"
+        app:menu="@menu/drawer_menu" />
+</androidx.drawerlayout.widget.DrawerLayout>

@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="400dp"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="16dp"
+    android:background="@drawable/popup_background"
+    android:gravity="center">
+
+    <TextView
+        android:textColor="@color/main_green"
+        android:id="@+id/languages"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/DillerTM"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:layout_gravity="center"/>
+
+    <CheckBox
+        android:layout_gravity="left"
+        android:buttonTint="@color/main_green"
+        android:textColor="@color/main_green"
+        android:id="@+id/turkmen"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Türkmen dili"
+        android:layout_marginTop="12dp"/>
+
+
+    <CheckBox
+        android:layout_gravity="left"
+        android:buttonTint="@color/main_green"
+        android:textColor="@color/main_green"
+        android:id="@+id/english"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Iňlis dili"
+        android:layout_marginTop="8dp"/>
+
+    <CheckBox
+        android:layout_gravity="left"
+        android:buttonTint="@color/main_green"
+        android:textColor="@color/main_green"
+        android:id="@+id/russian"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Rus dili"
+        android:layout_marginTop="8dp"/>
+
+    <CheckBox
+        android:layout_gravity="left"
+        android:buttonTint="@color/main_green"
+        android:textColor="@color/main_green"
+        android:id="@+id/japan"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Ýapon dili"
+        android:layout_marginTop="8dp"/>
+
+    <CheckBox
+        android:layout_gravity="left"
+        android:buttonTint="@color/main_green"
+        android:textColor="@color/main_green"
+        android:id="@+id/spain"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Ispan dili"
+        android:layout_marginTop="8dp"/>
+
+</LinearLayout>

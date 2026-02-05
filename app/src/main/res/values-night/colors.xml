@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <color name="main_green">#5E7662</color>
+    <color name="blured_main_green">#2F3B31</color>
+    <color name="kitaplar">#5E7662</color>
+
+    <color name="whitish_green">#2F3A33</color>
+    <color name="text_color">#E6E6E6</color>
+    <color name="text_color2">#CFE9CF</color>
+    <color name="text_color3">#9CCDA3</color>
+
+    <color name="background_popup">#3C443F</color>
+
+    <color name="app_icon_c">#6EA084</color>
+
+</resources>

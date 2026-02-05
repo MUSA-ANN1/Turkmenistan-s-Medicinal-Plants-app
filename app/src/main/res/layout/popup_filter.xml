@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="400dp"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="16dp"
+    android:background="@drawable/popup_background"
+    android:gravity="center">
+
+    <TextView
+        android:textColor="@color/main_green"
+        android:id="@+id/filterTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/Boýunça_süzüňTM"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:layout_gravity="center"/>
+
+    <CheckBox
+        android:layout_gravity="left"
+        android:buttonTint="@color/main_green"
+        android:textColor="@color/main_green"
+        android:id="@+id/checkBoxHeader"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Temaň ady"
+        android:layout_marginTop="12dp"/>
+
+
+    <CheckBox
+        android:layout_gravity="left"
+        android:buttonTint="@color/main_green"
+        android:textColor="@color/main_green"
+        android:id="@+id/checkBoxTopic"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Tema"
+        android:layout_marginTop="8dp"/>
+
+    <CheckBox
+        android:layout_gravity="left"
+        android:buttonTint="@color/main_green"
+        android:textColor="@color/main_green"
+        android:id="@+id/checkBoxKey"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Temaň belgisi"
+        android:layout_marginTop="8dp"/>
+
+    <Button
+        android:id="@+id/buttonApply"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Bolýar"
+        android:layout_marginTop="16dp"
+        android:backgroundTint="@color/main_green"
+        android:textColor="@color/text_color2"/>
+</LinearLayout>

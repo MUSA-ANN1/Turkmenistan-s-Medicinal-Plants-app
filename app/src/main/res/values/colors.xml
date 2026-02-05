@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+    <color name="transparent">#00FFFFFF</color>
+
+    <color name="main_green">#7EA084</color>
+    <color name="blured_main_green">#3F5042</color>
+    <color name="kitaplar">#5F8264</color>
+
+    <color name="whitish_green">#CEDBD1</color>
+    <color name="text_color">#FDFDFD</color>
+    <color name="text_color2">#F1FFEC</color>
+    <color name="text_color3">#29653A</color>
+
+    <color name="background_popup">#D9DCE1</color>
+
+    <color name="app_icon_c">#6EA084</color>
+
+</resources>

@@ -1,0 +1,25 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/nav_home"
+        android:title="@string/homeTM" />
+
+    <item
+        android:id="@+id/nav_settings"
+        android:title="@string/settingsTM" />
+
+    <item
+        android:id="@+id/nav_saved"
+        android:title="@string/savedTM" />
+
+    <group>
+        <item
+            android:id="@+id/nav_aboutapp"
+            android:title="@string/about_appTM" />
+
+        <item
+            android:id="@+id/nav_aboutus"
+            android:title="@string/about_usTM" />
+    </group>
+
+</menu>
