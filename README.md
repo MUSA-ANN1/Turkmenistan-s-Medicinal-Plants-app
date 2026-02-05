@@ -1,6 +1,6 @@
 # 🌿 Türkmenistanyň Dermanlyk Ösümlikleri 📚
 
-An **offline herbal plant reference app** featuring **16 volumes** of "Türkmenistanyň dermanlyk ösümlikleri". Multi-language support allows users to explore traditional and scientific knowledge in **Turkmen, English, Russian, Japanese, and Spanish**. Perfect for students, researchers, or anyone interested in natural medicine.  
+An **exhaustive offline compendium of herbal therapeutics**, comprising **16 volumes** of "Türkmenistanyň dermanlyk ösümlikleri". This application facilitates **multilingual exploration** in **Turkmen, English, Russian, Japanese, and Spanish**, providing both scholarly and practical insights into medicinal flora. Ideal for students, researchers, and practitioners of natural medicine.  
 
 ![App Screenshot](link_to_screenshot1)  
 ![App Screenshot](link_to_screenshot2)  
@@ -8,50 +8,51 @@ An **offline herbal plant reference app** featuring **16 volumes** of "Türkmeni
 ---
 
 ## ⚡ Features
-- 🌐 **Offline access** – all content available without internet  
-- 🔍 **Search and filter** across books  
-- ✏️ **Underlined search results** for easy reference  
-- 💾 **Save favorite plants**  
-- 🌙 **Dark mode** for comfortable reading  
-- ✋ **Resizable text** with pinch gestures (in plant info pages)  
-- 📖 **Selectable text** for copying  
-- 🗣️ **Multi-language support:** Turkmen, English, Russian, Japanese, Spanish  
-- 🧬 **Detailed plant descriptions** with scientific names and medicinal uses  
-- 🟢 **Clean, green UI** optimized for reading and visual comfort  
+- 🌐 **Complete offline accessibility** – uninterrupted exploration without internet  
+- 🔍 **Advanced search and filtering** across all volumes  
+- ✏️ **Highlighted search results** for precise referencing  
+- 💾 **Bookmark and save** essential entries  
+- 🌙 **Dark mode interface** for optimal ocular comfort  
+- ✋ **Dynamic text resizing** via pinch gestures (plant info pages)  
+- 📖 **Selectable text** for academic or personal use  
+- 🗣️ **Comprehensive multilingual support:** Turkmen, English, Russian, Japanese, Spanish  
+- 🧬 **Detailed phytological profiles** including scientific classification and therapeutic applications  
+- 🟢 **Elegant, verdant UI** optimized for prolonged reading  
 
 ---
 
 ## 📲 Play Store
-Get the app on **Google Play:** [Download Here](https://play.google.com/store/apps/details?id=com.medicine.kitaphana)  
+Download the app on **Google Play:** [Download Here](https://play.google.com/store/apps/details?id=com.medicine.kitaphana)  
 
 ---
 
-## 🛠️ Technologies Used
-- **Android Studio** for app development  
-- **All texts stored in `strings.xml`** for easy localization  
+## 🛠️ Technologies Utilized
+- **Android Studio** for development and compilation  
+- **All textual data stored in `strings.xml`** to facilitate localization and maintainability  
 
 ---
 
-## 📝 Usage / How It Works
-The app is designed for **middle, high school, and university students**, as well as **anyone interested in herbal medicine**.  
-- Upon opening, users see **16 books**.  
-- Users can **search**, **filter**, and **select books**.  
-- Each book contains **cards for every plant**, featuring:  
+## 📝 Usage / Functional Overview
+This application is meticulously designed for **middle, high school, and university students**, as well as **anyone pursuing herbal therapeutics**:  
+- On launch, users encounter **16 comprehensive herbal volumes**  
+- Users may **search, filter, and select** any book for detailed study  
+- Each book contains **informational cards** encompassing:  
   - Plant name  
-  - Detailed description  
-  - Scientific classification  
-  - Medicinal uses  
+  - Comprehensive description  
+  - Scientific taxonomy  
+  - Medicinal applications  
 
-💡 **Use Cases:**  
-- Students preparing for competitions or academic projects  
-- Individuals making natural remedies  
-- Parents seeking affordable alternatives to conventional medicine  
+💡 **Practical Applications:**  
+- Academic preparation and competitions  
+- Formulation of natural remedies  
+- Economical alternatives to conventional pharmaceuticals  
+- Guidance for caregivers seeking cost-effective medicinal solutions  
 
 ---
 
-## 🚀 Future Improvements / Roadmap
-- 🔊 **Text-to-Speech** for visually impaired users  
-- 🤖 **RAG integration** to query medicinal solutions directly from the books  
+## 🚀 Future Enhancements / Roadmap
+- 🔊 **Text-to-Speech integration** for visually impaired users  
+- 🤖 **Retrieval-Augmented Generation (RAG)** for intelligent queries on plant-based remedies directly from the volumes  
 
 ---
 
@@ -64,13 +65,7 @@ The app is designed for **middle, high school, and university students**, as wel
 ---
 
 ## 🏛️ Credits / Notes
-All medicinal plant content is sourced from the **masterpiece of 
-<br> 
-Turkmenistan's National Leader, 
-<br> 
-Hero Arkadag, 
-<br> 
+All medicinal plant content is sourced from the **masterpiece of  
+Turkmenistan's National Leader,  
+Hero Arkadag,  
 Gurbanguly Berdimuhamedow**.  
-
----
-
