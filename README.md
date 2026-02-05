@@ -64,7 +64,10 @@ The app is designed for **middle, high school, and university students**, as wel
 ---
 
 ## 🏛️ Credits / Notes
-All medicinal plant content is sourced from the **masterpiece of Turkmenistan's National Leader, Hero Arkadag, Gurbanguly Berdimuhamedow**.  
+All medicinal plant content is sourced from the **masterpiece of
+Turkmenistan's National Leader,
+Hero Arkadag,
+Gurbanguly Berdimuhamedow**.  
 
 ---
 
