@@ -22,6 +22,7 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
 
 import java.text.Normalizer;
@@ -78,6 +79,12 @@ public class MainActivity extends AppCompatActivity {
 
         getWindow().setStatusBarColor(getColor(R.color.main_green));
         getWindow().setNavigationBarColor(getColor(R.color.main_green));
+
+        FloatingActionButton btnAI = findViewById(R.id.btn_ai);
+        btnAI.setOnClickListener(v -> {
+            Intent intent = new Intent(MainActivity.this, AI_activity.class);
+            startActivity(intent);
+        });
 
 
         drawerLayout = findViewById(R.id.drawer_layout);

@@ -34,6 +34,9 @@ android {
 dependencies {
     implementation(libs.material)
 
+    //noinspection UseTomlInstead
+    implementation("com.google.ai.client.generativeai:generativeai:0.9.0")
+
     implementation(libs.appcompat)
     implementation(libs.material)
     implementation("androidx.activity:activity:1.8.2")
