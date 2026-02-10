@@ -18,11 +18,13 @@ An **exhaustive offline compendium of herbal therapeutics**, comprising **16 vol
 - 🗣️ **Comprehensive multilingual support:** Turkmen, English, Russian, Japanese, Spanish  
 - 🧬 **Detailed phytological profiles** including scientific classification and therapeutic applications  
 - 🟢 **Elegant, verdant UI** optimized for prolonged reading  
+- 🤖 **AI-Driven Semantic Assistance powered by Gemini 3 Flash S API**, enabling **context-aware clarifications**, **concise interpretations**, and **intelligent guidance** on medicinal plants  
 
 ---
 
 ## 📲 Play Store
-Download the app on **Google Play:** [Download Here](https://play.google.com/store/apps/details?id=com.medicine.kitaphana)  
+Download the app on **Google Play:**  
+[Download Here](https://play.google.com/store/apps/details?id=com.medicine.kitaphana)
 
 ---
 
@@ -53,6 +55,7 @@ This application is meticulously designed for **middle, high school, and univers
 ## 🚀 Future Enhancements / Roadmap
 - 🔊 **Text-to-Speech integration** for visually impaired users  
 - 🤖 **Retrieval-Augmented Generation (RAG)** for intelligent queries on plant-based remedies directly from the volumes  
+- 🔬 **Expanded AI Proficiency using Gemini 3 Flash S**, enabling **nuanced phytological interpretations**, **evidence-based suggestions**, and **scholarly-grade reasoning** on herbal properties  
 
 ---
 
