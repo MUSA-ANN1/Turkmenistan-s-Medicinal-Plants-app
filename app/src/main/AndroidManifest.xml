@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <uses-permission android:name="android.permission.INTERNET" />
 
     <application
         android:allowBackup="true"
@@ -16,11 +17,14 @@
         tools:targetApi="31">
         <activity
             android:name=".AI_activity"
-            android:exported="false" />
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize|stateHidden"
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".SplashActivity"
             android:exported="true"
-            android:theme="@style/Theme.App.Launcher">
+            android:theme="@style/Theme.App.Launcher"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -29,16 +33,20 @@
         </activity>
         <activity
             android:name=".Saved"
-            android:exported="false" />
+            android:exported="false"
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".AboutUs"
-            android:exported="false" />
+            android:exported="false"
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".AboutApp"
-            android:exported="false" />
+            android:exported="false"
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".Settings"
-            android:exported="false" />
+            android:exported="false"
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".Tema"
             android:exported="false"

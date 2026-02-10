@@ -1,37 +1,159 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.drawerlayout.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/main"
+    android:id="@+id/drawer_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".AI_activity">
+    android:fitsSystemWindows="true"
+    tools:context=".AI_activity"
+    android:background="@color/main_green">
 
-    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        android:orientation="vertical"
-        android:padding="20dp"
-        android:gravity="center"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/main"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <ImageView
+            android:id="@+id/imageView3"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageView
+            android:id="@+id/imageView"
+            android:layout_width="match_parent"
+            android:layout_height="115dp"
+            android:src="@drawable/tegelek"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ScrollView
+            android:id="@+id/scrollView"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:paddingTop="46dp"
+            android:paddingBottom="35dp"
+            android:layout_marginTop="-30dp"
+            android:layout_marginBottom="-26dp"
+            app:layout_constraintTop_toBottomOf="@id/imageView"
+            app:layout_constraintBottom_toTopOf="@id/inputLayout"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent">
 
         <TextView
-            android:id="@+id/tvResult"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:text="AI result will appear here"
-            android:textSize="18sp"
-            android:textColor="@color/white" />
-
-        <EditText
-            android:id="@+id/etPrompt"
+            android:id="@+id/ai_response"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Write your question..."
-            android:textColor="@color/white"
-            android:textColorHint="@color/whitish_green" />
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="15dp"
+            android:fontFamily="@font/framd"
+            android:lineSpacingExtra="4dp"
+            android:text="Salam.\nMen Türkmenistanyň dermanlyk ösümlikleri barada kömek etýän AI.\n\nMen size nähili kömek edip bilerin..."
+            android:textColor="@color/kitaplar"
+            android:textSize="18sp" />
+        </ScrollView>
 
-    </LinearLayout>
+        <ProgressBar
+            android:id="@+id/loading_bar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="@id/scrollView"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
+        <ImageView
+            android:id="@+id/imageView1"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:rotation="180"
+            android:src="@drawable/tegelek"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/inputLayout" />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+        <LinearLayout
+            android:id="@+id/inputLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:padding="13dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent">
+
+            <androidx.cardview.widget.CardView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginEnd="8dp"
+                app:cardCornerRadius="12dp"
+                android:backgroundTint="@color/whitish_green"
+                android:layout_gravity="center">
+
+                <EditText
+                    android:id="@+id/user_input"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@android:color/transparent"
+                    android:fontFamily="@font/framd"
+                    android:inputType="textMultiLine"
+                    android:maxLines="4"
+                    android:padding="10dp"
+                    android:textColor="@color/kitaplar" />
+            </androidx.cardview.widget.CardView>
+
+            <androidx.cardview.widget.CardView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="4dp"
+                app:cardCornerRadius="12dp"
+                android:backgroundTint="@color/whitish_green">
+
+                <ImageButton
+                    android:id="@+id/send_button"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:backgroundTint="@color/whitish_green"
+                    android:src="@drawable/send"
+                    app:tint="@color/kitaplar"/>
+
+            </androidx.cardview.widget.CardView>
+        </LinearLayout>
+
+        <ImageView
+            android:id="@+id/burger_icon"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_marginStart="18dp"
+            android:layout_marginTop="11dp"
+            android:contentDescription="Menu"
+            android:src="@drawable/burger_icon"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:tint="@color/whitish_green" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <com.google.android.material.navigation.NavigationView
+        android:id="@+id/navigation_view"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_gravity="start"
+        android:background="@color/main_green"
+        app:headerLayout="@layout/drawer_header"
+        app:itemBackground="@drawable/drawer_item_background"
+        app:itemIconTint="@color/whitish_green"
+        app:itemTextColor="@color/whitish_green"
+        app:menu="@menu/drawer_menu" />
+</androidx.drawerlayout.widget.DrawerLayout>

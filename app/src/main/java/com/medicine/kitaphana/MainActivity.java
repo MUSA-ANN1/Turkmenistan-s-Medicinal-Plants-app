@@ -243,6 +243,8 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void afterTextChanged(Editable s) {
+                getWindow().setStatusBarColor(getColor(R.color.main_green));
+                getWindow().setNavigationBarColor(getColor(R.color.main_green));
                 main.postDelayed(() -> {
                     if (System.currentTimeMillis() - lastChange >= debounceDelay) {
                         searchedText = s.toString();
