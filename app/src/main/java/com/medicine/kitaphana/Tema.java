@@ -54,9 +54,17 @@ public class Tema extends AppCompatActivity {
         SharedPreferences prefs = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
         textScale = prefs.getFloat(KEY_TEXT_SCALE, 1.0f);
 
-        // Load topic text
-        int resId = this.getResources().getIdentifier((MainActivity.tema + MainActivity.currentLanguage), "string", this.getPackageName());
-        String topicText = this.getString(resId);
+        // Construct the name
+        String resourceName = MainActivity.tema + MainActivity.currentLanguage;
+        int resId = getResources().getIdentifier(resourceName, "string", getPackageName());
+
+        String topicText;
+        if (resId != 0) {
+            topicText = getString(resId);
+        } else {
+            // Fallback: Use a default string or an empty string to prevent the crash
+            topicText = "Resource not found: " + resourceName;
+        }
         t.setText(topicText);
 
         // Load header text

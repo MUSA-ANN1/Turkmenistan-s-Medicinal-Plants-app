@@ -1,9 +1,13 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <style name="Base.Theme.Kitaphana" parent="Theme.Material3.DayNight.NoActionBar">
-        <item name="colorControlActivated">@color/main_green</item>
         <item name="android:src">#DADDE2</item>
+        <item name="colorPrimary">@color/main_green</item>
+        <item name="colorPrimaryVariant">@color/main_green</item>
+        <item name="colorOnPrimary">@color/white</item>
         <item name="android:statusBarColor">@color/main_green</item>
         <item name="android:navigationBarColor">@color/main_green</item>
+        <item name="android:windowDrawsSystemBarBackgrounds">true</item>
+        <item name="android:windowTranslucentStatus">false</item>
     </style>
 
     <style name="Theme.Kitaphana" parent="Base.Theme.Kitaphana" />

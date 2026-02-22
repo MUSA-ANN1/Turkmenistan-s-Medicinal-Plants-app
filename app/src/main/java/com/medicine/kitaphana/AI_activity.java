@@ -2,59 +2,154 @@ package com.medicine.kitaphana;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.os.Handler;
-import android.text.Html;
-import android.text.method.LinkMovementMethod;
+import android.text.Spanned;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.ContextCompat;
+import androidx.core.text.HtmlCompat;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.ai.client.generativeai.type.RequestOptions;
+import com.google.android.material.navigation.NavigationView;
 import com.google.ai.client.generativeai.GenerativeModel;
 import com.google.ai.client.generativeai.java.ChatFutures;
 import com.google.ai.client.generativeai.java.GenerativeModelFutures;
 import com.google.ai.client.generativeai.type.Content;
 import com.google.ai.client.generativeai.type.GenerateContentResponse;
 import com.google.ai.client.generativeai.type.GenerationConfig;
-import com.google.ai.client.generativeai.type.RequestOptions;
-import com.google.ai.client.generativeai.type.SafetySetting;
-import com.google.android.material.navigation.NavigationView;
 import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 
 public class AI_activity extends AppCompatActivity {
+
+    private static final String MODEL = "gemini-2.5-flash-lite";
+
+    private static final String DEVELOPER_INFO =
+            "Bu programmany Musa Annagulyýew döretdi.\n" +
+                    "Musa Android developer, CS student, 3D/AR höwesjeňi.\n" +
+                    "Başarnyklary: Android Studio (Java/Kotlin), Jetpack Compose, AR Foundation, Python, JavaScript, 3ds Max, AutoCAD, Photoshop, Illustrator.\n" +
+                    "Çap edilen goşundylary:\n" +
+                    "- Türkmenistanyň Dermanlyk Ösümlikleri (offline kitap, 5 dil)\n" +
+                    "- Berk Bilim (mental arifmetika + karýera maslahatçysy)\n" +
+                    "- Mini Chemistry Translator\n" +
+                    "Maksat: MEXT üçin portfolio, AR programmalar.\n" +
+                    "Habarlaşmak: musa.annaguliev@gmail.com | Telegram: @Mu4asa";
+
+    private static final String SYSTEM_PROMPT =
+            "Seniň adyň Ösümlik Bilimi 🌿\n" +
+                    "Sen peýdaly we dostlukly AI kömekçi.\n" +
+                    "Ulanyjy haýsy dilde ýazsa şol dilde jogap ber.\n" +
+                    "Jogaplaryňy Markdown formatda we emojiler bilen ýaz.\n" +
+                    "Gysgaça we anyk jogap ber.\n\n" +
+                    "Eger ulanyjy developer, Musa ýa-da programma barada sorasa şu maglumaty ulan:\n" +
+                    DEVELOPER_INFO;
+
+    // -------------------- Data Model --------------------
+    private static class Message {
+        String text;
+        boolean isUser;
+        Message(String text, boolean isUser) {
+            this.text = text;
+            this.isUser = isUser;
+        }
+    }
+
+    // -------------------- Fields --------------------
+    private ChatFutures chat;
+    private final Executor executor = Executors.newSingleThreadExecutor();
+    private List<Message> messages;
+    private ChatAdapter adapter;
+    private RecyclerView chatRecycler;
+    private SharedPreferences sp;
+    private ProgressBar loadingBar;
+    private ImageButton sendButton;
 
     DrawerLayout drawerLayout;
     NavigationView navigationView;
     ImageView burgerIcon;
-    private EditText userInput;
-    private TextView aiResponseText;
-    private ProgressBar loadingBar; // Declared here
-    private ChatFutures chatSession;
-    private boolean isAiReady = false; // Safety flag
 
-    @SuppressLint({"MissingInflatedId", "NewApi"})
+    // -------------------- Adapter --------------------
+    class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+        private final List<Message> msgs;
+
+        ChatAdapter(List<Message> msgs) {
+            this.msgs = msgs;
+        }
+
+        @Override
+        public int getItemViewType(int pos) {
+            return msgs.get(pos).isUser ? 1 : 2;
+        }
+
+        @NonNull
+        @Override
+        public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+            int layout = viewType == 1 ? R.layout.message_item_user : R.layout.message_item_ai;
+            View v = LayoutInflater.from(parent.getContext()).inflate(layout, parent, false);
+            return viewType == 1 ? new UserHolder(v) : new AiHolder(v);
+        }
+
+        @Override
+        public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int pos) {
+            Message msg = msgs.get(pos);
+            if (holder instanceof AiHolder) {
+                ((AiHolder) holder).msg.setText(markdownToSpanned(msg.text));
+            } else {
+                ((UserHolder) holder).msg.setText(msg.text);
+            }
+        }
+
+        @Override
+        public int getItemCount() {
+            return msgs.size();
+        }
+
+        class UserHolder extends RecyclerView.ViewHolder {
+            TextView msg;
+            UserHolder(View v) {
+                super(v);
+                msg = v.findViewById(R.id.messageText);
+            }
+        }
+
+        class AiHolder extends RecyclerView.ViewHolder {
+            TextView msg;
+            AiHolder(View v) {
+                super(v);
+                msg = v.findViewById(R.id.messageText);
+            }
+        }
+    }
+
+    // -------------------- onCreate --------------------
+    @SuppressLint("CutPasteId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_ai);
-
-        getWindow().setStatusBarColor(getColor(R.color.main_green));
-        getWindow().setNavigationBarColor(getColor(R.color.main_green));
 
         drawerLayout = findViewById(R.id.drawer_layout);
         navigationView = findViewById(R.id.navigation_view);
@@ -69,189 +164,180 @@ public class AI_activity extends AppCompatActivity {
         navigationView.setNavigationItemSelectedListener(item -> {
             int id = item.getItemId();
             if (id == R.id.nav_home) startActivity(new Intent(this, MainActivity.class));
-            else if (id == R.id.nav_saved) startActivity(new Intent(this, Saved.class));
+            else if (id == R.id.nav_saved) drawerLayout.closeDrawer(GravityCompat.START);
             else if (id == R.id.nav_settings) startActivity(new Intent(this, Settings.class));
             else if (id == R.id.nav_aboutapp) startActivity(new Intent(this, AboutApp.class));
-            else if (id == R.id.nav_aboutus) drawerLayout.closeDrawer(GravityCompat.START);
+            else if (id == R.id.nav_aboutus) startActivity(new Intent(this, AboutUs.class));
             drawerLayout.closeDrawer(GravityCompat.START);
             return true;
         });
 
-        // --- FIX STARTS HERE ---
-        userInput = findViewById(R.id.user_input);
-        aiResponseText = findViewById(R.id.ai_response);
-        loadingBar = findViewById(R.id.loading_bar); // <--- THIS WAS MISSING!
-        ImageButton btnSend = findViewById(R.id.send_button);
-        // --- FIX ENDS HERE ---
+        EditText userInput         = findViewById(R.id.user_input);
+        sendButton                 = findViewById(R.id.send_button);
+        loadingBar                 = findViewById(R.id.loading_bar);
+        chatRecycler               = findViewById(R.id.chatRecycler);
+        DrawerLayout drawerLayout  = findViewById(R.id.drawer_layout);
+        NavigationView navView     = findViewById(R.id.navigation_view);
+        View burgerIcon            = findViewById(R.id.burger_icon);
 
-        // Initialize Gemini in background
-        new Thread(() -> {
-            initializeGemini();
+        sp = getSharedPreferences("chat_cache", MODE_PRIVATE);
+        messages = new ArrayList<>();
+        adapter = new ChatAdapter(messages);
 
-            // Update UI when ready
-            runOnUiThread(() -> {
-                isAiReady = true;
-                Toast.makeText(this, "AI hünärmeni taýýar! (AI Ready)", Toast.LENGTH_SHORT).show();
-            });
-        }).start();
+        LinearLayoutManager lm = new LinearLayoutManager(this);
+        lm.setStackFromEnd(true);
+        chatRecycler.setLayoutManager(lm);
+        chatRecycler.setAdapter(adapter);
 
-        btnSend.setOnClickListener(v -> {
-            String text = userInput.getText().toString();
-            if (text.isEmpty()) {
-                Toast.makeText(this, "Sorag ýazyň (Write a question)", Toast.LENGTH_SHORT).show();
-                return;
+        // Init Gemini
+        initGemini();
+
+        burgerIcon.setOnClickListener(v -> drawerLayout.open());
+        navView.setNavigationItemSelectedListener(item -> {
+            drawerLayout.close();
+            return true;
+        });
+
+        // Restore cached chat
+        String saved = sp.getString("messages", null);
+        if (saved != null) {
+            try {
+                JSONArray arr = new JSONArray(saved);
+                for (int i = 0; i < arr.length(); i++) {
+                    JSONObject obj = arr.getJSONObject(i);
+                    messages.add(new Message(obj.getString("text"), obj.getBoolean("isUser")));
+                }
+                adapter.notifyDataSetChanged();
+                if (!messages.isEmpty())
+                    chatRecycler.scrollToPosition(messages.size() - 1);
+            } catch (Exception e) {
+                e.printStackTrace();
             }
+        }
 
-            // Safety Check: Don't crash if user clicks before AI loads
-            if (!isAiReady || chatSession == null) {
-                Toast.makeText(this, "AI entek ýüklenýär, garaşyň... (Please wait)", Toast.LENGTH_SHORT).show();
-                return;
-            }
+        // Send button
+        sendButton.setOnClickListener(v -> {
+            String query = userInput.getText().toString().trim();
+            if (query.isEmpty()) return;
 
-            askGemini(text);
+            messages.add(new Message(query, true));
+            adapter.notifyItemInserted(messages.size() - 1);
+            chatRecycler.scrollToPosition(messages.size() - 1);
+            userInput.setText("");
+            saveChatCache();
+
+            loadingBar.setVisibility(View.VISIBLE);
+            sendButton.setEnabled(false);
+
+            sendMessage(query);
         });
     }
 
-    private void initializeGemini() {
-        // 1. Get data
-        String plantData = getPlantKnowledgeBase();
+    // -------------------- Init Gemini --------------------
+    private void initGemini() {
+        GenerationConfig.Builder configBuilder = new GenerationConfig.Builder();
+        configBuilder.maxOutputTokens = 500;
+        configBuilder.temperature = 0.7f;
 
-        // 2. Set instructions
-        String systemInstructionText =
-                "Sen hünärmen AI.\n" +
-                        "Eger ulanyjy Türkmenistanyň dermanlyk ösümlikleri barada sorasa, diňe berlen maglumatlara esaslan: " +
-                        "maglumat ýok bolsa 'Bilmedim' ýada internetdaky maglumaty görkez, maglumat bar ýöne düşünmek kyn bolsa 'Düşünmedim'.\n\n" +
-                        "Plant data gysga we strukturaly bolmaly, aşakdaky görnüşde:\n" +
-                        "## 🌿 Plant Name (bold & large text)\n" +
-                        "- What it does for illness\n" +
-                        "- Things needed\n" +
-                        "- How to prepare\n\n" +
-                        "Eger ulanyjy goşmaça şahsy maglumat berse (meselem, ýaşy, agramy, belentligi, alamatlary), " +
-                        "AI diňe ýokardaky plant maglumatlaryna esaslanyp, maslahat berip biler, dogry diagnoz bermän. " +
-                        "Her zaman degişli medisina hünärmenine ýüz tutmagy maslahat berýär.\n\n" +
-                        "PLANT DATA (source in Turkmen):\n" + plantData + "\n\n" +
-                        "Eger ulanyjy başga sorag berse (meselem, howa, dünýäniň iň uly ýurdy, umumy bilim soraglary), " +
-                        "AI jogap berip biler.\n\n" +
-                        "AI useriň soragynyň dilini anyklaýar we şol dilde jogap berýär. " +
-                        "Plant data diňe Turkmen dilinde berlen maglumatdan peýdalanyp, dogry we takyk bolmalydyr. " +
-                        "Other questions can be answered normally in the user’s language.";
-
+        // System instruction as Content
         Content systemInstruction = new Content.Builder()
-                .addText(systemInstructionText)
+                .addText(SYSTEM_PROMPT)
                 .build();
 
-        // 3. Configure Model (Explicit Constructor to avoid Builder errors)
-        GenerationConfig config = new GenerationConfig.Builder().build();
-        RequestOptions requestOptions = new RequestOptions();
-
-        GenerativeModel gm = new GenerativeModel(
-                "gemini-3-flash-preview",
-                "AIzaSyD_cZQnWTcNw1rLTfeMq7jJ4l15d35yzOU", // Your Key
-                config,
-                new ArrayList<SafetySetting>(),
-                requestOptions,
-                null,
-                null,
-                systemInstruction
+        GenerativeModel model = new GenerativeModel(
+                MODEL,                        // modelName
+                "AIzaSyCh1a-9JFKa5IWqMWlw5qQkYejqKop__UI",   // apiKey
+                configBuilder.build(),        // generationConfig
+                null,                         // safetySettings
+                new RequestOptions(),         // requestOptions
+                null,                         // tools
+                null,                         // toolConfig
+                systemInstruction             // systemInstruction
         );
 
-        GenerativeModelFutures model = GenerativeModelFutures.from(gm);
-        chatSession = model.startChat();
+        GenerativeModelFutures modelFutures = GenerativeModelFutures.from(model);
+        chat = modelFutures.startChat();
     }
 
-    private void askGemini(String query) {
-        // Clear input and show typing indicator
-        userInput.setText("");
-        loadingBar.setVisibility(View.VISIBLE);
-        aiResponseText.setText("AI jogap berýär...");
+    // -------------------- Send Message --------------------
+    private void sendMessage(String query) {
+        Content userContent = new Content.Builder()
+                .addText(query)
+                .build();
 
+        ListenableFuture<GenerateContentResponse> future = chat.sendMessage(userContent);
 
-        // Build content for Gemini
-        Content content = new Content.Builder().addText(query).build();
-        ListenableFuture<GenerateContentResponse> response = chatSession.sendMessage(content);
-
-        Futures.addCallback(response, new FutureCallback<GenerateContentResponse>() {
+        Futures.addCallback(future, new FutureCallback<GenerateContentResponse>() {
             @Override
             public void onSuccess(GenerateContentResponse result) {
+                String aiText = result.getText();
+                if (aiText == null) aiText = "❌ Jogap boş geldi.";
+                final String finalText = aiText;
                 runOnUiThread(() -> {
                     loadingBar.setVisibility(View.GONE);
-
-                    String mdResponse = result.getText();
-                    String htmlResponse = convertMarkdownToHtml(mdResponse);
-                    aiResponseText.setText(Html.fromHtml(htmlResponse, Html.FROM_HTML_MODE_LEGACY)+"\n\n");
-                    aiResponseText.setMovementMethod(LinkMovementMethod.getInstance()); // clickable links
+                    sendButton.setEnabled(true);
+                    messages.add(new Message(finalText, false));
+                    adapter.notifyItemInserted(messages.size() - 1);
+                    chatRecycler.scrollToPosition(messages.size() - 1);
+                    saveChatCache();
                 });
             }
 
-            @SuppressLint("SetTextI18n")
             @Override
             public void onFailure(@NonNull Throwable t) {
+                android.util.Log.e("GEMINI", "Error: " + t.getMessage(), t);
+                final String error = "❌ " + t.getClass().getSimpleName() + ": " + t.getMessage();
                 runOnUiThread(() -> {
                     loadingBar.setVisibility(View.GONE);
-                    aiResponseText.setText("Ýalňyşlyk: " + t.getMessage());
+                    sendButton.setEnabled(true);
+                    messages.add(new Message(error, false));
+                    adapter.notifyItemInserted(messages.size() - 1);
+                    chatRecycler.scrollToPosition(messages.size() - 1);
+                    saveChatCache();
                 });
             }
-        }, ContextCompat.getMainExecutor(this));
+        }, executor);
     }
 
+    // -------------------- Markdown → Spanned --------------------
+    private Spanned markdownToSpanned(String markdown) {
+        if (markdown == null)
+            return HtmlCompat.fromHtml("", HtmlCompat.FROM_HTML_MODE_LEGACY);
 
-    public String getPlantKnowledgeBase() {
-        StringBuilder sb = new StringBuilder();
-        // Scanning K1 (Book 1) and T1 to T150 (Plants)
-        for (int k = 1; k <= 2; k++) {
-            for (int t = 1; t <= 150; t++) {
-                String headerKey = "K" + k + "T" + t + "HTM";
-                String bodyKey = "K" + k + "T" + t + "TM";
+        String html = markdown
+                .replaceAll("(?m)^### (.+)$", "<b><big>$1</big></b>")
+                .replaceAll("(?m)^## (.+)$",  "<b><big><big>$1</big></big></b>")
+                .replaceAll("(?m)^# (.+)$",   "<b><big><big><big>$1</big></big></big></b>")
+                .replaceAll("\\*\\*(.+?)\\*\\*", "<b>$1</b>")
+                .replaceAll("\\*(.+?)\\*", "<i>$1</i>")
+                .replaceAll("(?m)^[•\\-] (.+)$", "&#8226; $1<br>")
+                .replace("\n", "<br>");
 
-                int hId = getResources().getIdentifier(headerKey, "string", getPackageName());
-                int bId = getResources().getIdentifier(bodyKey, "string", getPackageName());
+        return HtmlCompat.fromHtml(html, HtmlCompat.FROM_HTML_MODE_LEGACY);
+    }
 
-                if (hId != 0 && bId != 0) {
-                    sb.append("Ady: ").append(getResources().getString(hId)).append("\n");
-                    sb.append("Maglumat: ").append(getResources().getString(bId)).append("\n\n");
-                }
+    // -------------------- Cache --------------------
+    private void saveChatCache() {
+        JSONArray arr = new JSONArray();
+        try {
+            int start = Math.max(0, messages.size() - 50);
+            for (int i = start; i < messages.size(); i++) {
+                JSONObject o = new JSONObject();
+                o.put("text",   messages.get(i).text);
+                o.put("isUser", messages.get(i).isUser);
+                arr.put(o);
             }
+            sp.edit().putString("messages", arr.toString()).apply();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-        return sb.toString();
     }
 
-
-    private String convertMarkdownToHtml(String md) {
-        if (md == null) return "";
-
-        String html = md;
-
-        // Bold + Italic first
-        html = html.replaceAll("\\*\\*\\*(.*?)\\*\\*\\*", "<b><i>$1</i></b>");
-        html = html.replaceAll("\\*\\*(.*?)\\*\\*", "<b>$1</b>");
-        html = html.replaceAll("\\*(.*?)\\*", "<i>$1</i>");
-
-        // Headings
-        html = html.replaceAll("(?m)^### (.*)", "<h4>$1</h4>");
-        html = html.replaceAll("(?m)^## (.*)", "<h3>$1</h3>");
-        html = html.replaceAll("(?m)^# (.*)", "<h2>$1</h2>");
-
-        // Bullet lists
-        html = html.replaceAll("(?m)^\\s*[-*+] (.*)", "&#8226; $1<br>");
-
-        // Inline code
-        html = html.replaceAll("`(.*?)`", "<code>$1</code>");
-
-        // Code blocks
-        html = html.replaceAll("(?s)```(.*?)```", "<pre>$1</pre>");
-
-        // Links
-        html = html.replaceAll("\\[(.*?)\\]\\((.*?)\\)", "<a href=\"$2\">$1</a>");
-
-        // Horizontal rules
-        html = html.replaceAll("(?m)^---$", "<hr>");
-
-        // Newlines → <br>
-        html = html.replaceAll("\\n", "<br>");
-
-        return html;
+    // -------------------- Lifecycle --------------------
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
     }
-
 
 
     private void updateDrawerMenuTitles() {
@@ -270,6 +356,5 @@ public class AI_activity extends AppCompatActivity {
                 getResources().getIdentifier("about_app" + MainActivity.currentLanguage, "string", getPackageName())));
         menu.findItem(R.id.nav_aboutus).setTitle(getString(
                 getResources().getIdentifier("about_us" + MainActivity.currentLanguage, "string", getPackageName())));
-
     }
 }

@@ -53,6 +53,8 @@ public class MainActivity extends AppCompatActivity {
 
     private List<ImageView> kitapImages = new ArrayList<>();
     private List<CardView> kitapImagesCheckBox = new ArrayList<>();
+    private final List<List<String>> kitapTopicsCache = new ArrayList<>();
+
 
     @SuppressLint({"MissingInflatedId", "LocalSuppress", "ScheduleExactAlarm", "NonConstantResourceId"})
     @Override
@@ -76,6 +78,8 @@ public class MainActivity extends AppCompatActivity {
         }
 
         scheduleNewYearAlarm();*/
+
+        preloadTopics();
 
         getWindow().setStatusBarColor(getColor(R.color.main_green));
         getWindow().setNavigationBarColor(getColor(R.color.main_green));
@@ -264,52 +268,57 @@ public class MainActivity extends AppCompatActivity {
 
 
 
+    private void preloadTopics() {
+        kitapTopicsCache.clear();
 
-private void applySearchFilter(String query) {
+        for (int i = 1; i <= 16; i++) {
+            List<String> topicList = new ArrayList<>();
+
+            for (int j = 1; j <= 207; j++) {
+                int topicId = getResources().getIdentifier("K" + i + "T" + j + currentLanguage, "string", getPackageName());
+                int headerId = getResources().getIdentifier("K" + i + "T" + j + "H" + currentLanguage, "string", getPackageName());
+
+                if (topicId != 0) topicList.add(normalize(getString(topicId)));
+                if (headerId != 0) topicList.add(normalize(getString(headerId)));
+            }
+
+            kitapTopicsCache.add(topicList);
+        }
+    }
+
+
+
+    private void applySearchFilter(String query) {
         String normalizedQuery = normalize(query);
 
         for (int i = 0; i < kitapImages.size(); i++) {
             ImageView kitapImage = kitapImages.get(i);
             CardView kitapImageCheckBox = kitapImagesCheckBox.get(i);
-            if (kitapImage == null) continue;
 
-            int viewId = kitapImage.getId();
-            String kitapName = getResources().getResourceEntryName(viewId);
-
+            String kitapName = getResources().getResourceEntryName(kitapImage.getId());
             String kitapNumber = kitapName.replaceAll("[^0-9]", "");
             String normalizedKitapName = normalize(kitapName);
 
-            boolean matchesTopicOrHeader = false;
-            try {
-                for (int j = 1; j <= 10; j++) {
-                    int topicId = getResources().getIdentifier("K" + kitapNumber + "T" + j + currentLanguage, "string", getPackageName());
-                    int headerId = getResources().getIdentifier("K" + kitapNumber + "T" + j + "H" + currentLanguage, "string", getPackageName());
+            boolean matches = false;
 
-                    if (topicId != 0) {
-                        String topicText = getString(topicId);
-                        if (normalize(topicText).contains(normalizedQuery)) {
-                            matchesTopicOrHeader = true;
-                            break;
-                        }
-                    }
-
-                    if (headerId != 0) {
-                        String headerText = getString(headerId);
-                        if (normalize(headerText).contains(normalizedQuery)) {
-                            matchesTopicOrHeader = true;
-                            break;
-                        }
-                    }
-                }
-            } catch (Exception ignored) {
+            // 1) Check book name
+            if (normalizedKitapName.contains(normalizedQuery)) {
+                matches = true;
             }
 
-            boolean matches = normalizedKitapName.contains(normalizedQuery)
-                    || normalize(kitapNumber).contains(normalizedQuery)
-                    || matchesTopicOrHeader;
+            // 2) Check topics from CACHE
+            if (!matches && !normalizedQuery.isEmpty()) {
+                List<String> topics = kitapTopicsCache.get(i);
+                for (String t : topics) {
+                    if (t.contains(normalizedQuery)) {
+                        matches = true;
+                        break;
+                    }
+                }
+            }
 
-            kitapImageCheckBox.setVisibility(matches || normalizedQuery.isEmpty() ? View.VISIBLE : View.GONE);
             kitapImage.setVisibility(matches || normalizedQuery.isEmpty() ? View.VISIBLE : View.GONE);
+            kitapImageCheckBox.setVisibility(matches || normalizedQuery.isEmpty() ? View.VISIBLE : View.GONE);
         }
     }
 

@@ -80,6 +80,7 @@
                                 android:inputType="text"
                                 android:textColor="@color/text_color"
                                 android:textColorHint="@color/whitish_green"
+                                android:textColorHighlight="@color/text_color3"
                                 android:textSize="20dp" />
 
                         </LinearLayout>

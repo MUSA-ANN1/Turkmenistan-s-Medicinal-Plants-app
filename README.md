@@ -2,8 +2,8 @@
 
 An **exhaustive offline compendium of herbal therapeutics**, comprising **16 volumes** of "Türkmenistanyň dermanlyk ösümlikleri". This application facilitates **multilingual exploration** in **Turkmen, English, Russian, Japanese, and Spanish**, providing both scholarly and practical insights into medicinal flora. Ideal for students, researchers, and practitioners of natural medicine.  
 
-![App Screenshot](link_to_screenshot1)  
-![App Screenshot](link_to_screenshot2)  
+![App Screenshot](https://github.com/MUSA-ANN1/MUSA-ANN1/logo_Dermanlyk.png)  
+![App Screenshot](https://github.com/MUSA-ANN1/MUSA-ANN1/logo_Dermanlyk.png)  
 
 ---
 

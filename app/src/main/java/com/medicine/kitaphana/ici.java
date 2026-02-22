@@ -69,12 +69,7 @@ public class ici extends AppCompatActivity {
         setContentView(R.layout.activity_ici);
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
-            v.setPadding(
-                    insets.getInsets(WindowInsetsCompat.Type.systemBars()).left,
-                    insets.getInsets(WindowInsetsCompat.Type.systemBars()).top,
-                    insets.getInsets(WindowInsetsCompat.Type.systemBars()).right,
-                    insets.getInsets(WindowInsetsCompat.Type.systemBars()).bottom
-            );
+            v.setPadding(insets.getInsets(WindowInsetsCompat.Type.systemBars()).left, insets.getInsets(WindowInsetsCompat.Type.systemBars()).top, insets.getInsets(WindowInsetsCompat.Type.systemBars()).right, insets.getInsets(WindowInsetsCompat.Type.systemBars()).bottom);
             return insets;
         });
 
@@ -84,9 +79,7 @@ public class ici extends AppCompatActivity {
 
         updateDrawerMenuTitles();
 
-        burgerIcon.setOnClickListener(v ->
-                drawerLayout.openDrawer(GravityCompat.START)
-        );
+        burgerIcon.setOnClickListener(v -> drawerLayout.openDrawer(GravityCompat.START));
 
         navigationView.setNavigationItemSelectedListener(item -> {
             int id = item.getItemId();
@@ -101,11 +94,7 @@ public class ici extends AppCompatActivity {
 
         searchEditText = findViewById(R.id.editText_ici);
 
-        int resId = getResources().getIdentifier(
-                "Gözle" + MainActivity.currentLanguage,
-                "string",
-                getPackageName()
-        );
+        int resId = getResources().getIdentifier("Gözle" + MainActivity.currentLanguage, "string", getPackageName());
         searchEditText.setHint(getString(resId));
 
         SharedPreferences prefs = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
@@ -134,22 +123,32 @@ public class ici extends AppCompatActivity {
 
     private void loadData(Context context) {
         int index = 1;
-        while (true) {
+        int emptyCount = 0;
+
+        while (emptyCount < 20) {
             int headerId = context.getResources().getIdentifier(
                     "K" + MainActivity.kitap + "T" + index + "H" + MainActivity.currentLanguage,
-                    "string", context.getPackageName()
+                    "string",
+                    context.getPackageName()
             );
+
             int topicId = context.getResources().getIdentifier(
                     "K" + MainActivity.kitap + "T" + index + MainActivity.currentLanguage,
-                    "string", context.getPackageName()
+                    "string",
+                    context.getPackageName()
             );
-            if (headerId == 0 || topicId == 0) break;
 
-            allItems.add(new CardItem(
-                    "K" + MainActivity.kitap + "T" + index,
-                    context.getString(headerId),
-                    context.getString(topicId)
-            ));
+            if (headerId == 0 || topicId == 0) {
+                emptyCount++;
+            } else {
+                allItems.add(new CardItem(
+                        "K" + MainActivity.kitap + "T" + index,
+                        context.getString(headerId),
+                        context.getString(topicId)
+                ));
+                emptyCount = 0;
+            }
+
             index++;
         }
     }
@@ -194,9 +193,7 @@ public class ici extends AppCompatActivity {
         }
 
         for (CardItem item : allItems) {
-            if ((h && item.nHeader.contains(q)) ||
-                    (t && item.nTopic.contains(q)) ||
-                    (k && item.nKey.contains(q))) {
+            if ((h && item.nHeader.contains(q)) || (t && item.nTopic.contains(q)) || (k && item.nKey.contains(q))) {
                 filteredItems.add(item);
             }
         }
@@ -208,8 +205,7 @@ public class ici extends AppCompatActivity {
     // ---------------- SEARCH STATE ----------------
 
     private void loadSavedSearch() {
-        String s = getSharedPreferences(SEARCH_PREFS, MODE_PRIVATE)
-                .getString(KEY_SEARCH_TEXT, "");
+        String s = getSharedPreferences(SEARCH_PREFS, MODE_PRIVATE).getString(KEY_SEARCH_TEXT, "");
         searchEditText.setText(s);
         applyCustomFilters(filterHeader, filterTopic, filterKey);
     }
@@ -217,19 +213,14 @@ public class ici extends AppCompatActivity {
     @Override
     protected void onPause() {
         super.onPause();
-        getSharedPreferences(SEARCH_PREFS, MODE_PRIVATE)
-                .edit()
-                .putString(KEY_SEARCH_TEXT, searchEditText.getText().toString())
-                .apply();
+        getSharedPreferences(SEARCH_PREFS, MODE_PRIVATE).edit().putString(KEY_SEARCH_TEXT, searchEditText.getText().toString()).apply();
     }
 
     // ---------------- HELPERS ----------------
 
     static String normalize(String t) {
         if (t == null) return "";
-        return Normalizer.normalize(t, Normalizer.Form.NFD)
-                .replaceAll("\\p{M}", "")
-                .toLowerCase(Locale.ROOT);
+        return Normalizer.normalize(t, Normalizer.Form.NFD).replaceAll("\\p{M}", "").toLowerCase(Locale.ROOT);
     }
 
     public void acyl(String key) {
@@ -243,70 +234,80 @@ public class ici extends AppCompatActivity {
     private void updateDrawerMenuTitles() {
         if (navigationView == null) return;
         Menu menu = navigationView.getMenu();
-        menu.findItem(R.id.nav_home).setTitle(getString(
-                getResources().getIdentifier("home" + MainActivity.currentLanguage, "string", getPackageName())));
-        menu.findItem(R.id.nav_settings).setTitle(getString(
-                getResources().getIdentifier("settings" + MainActivity.currentLanguage, "string", getPackageName())));
-        menu.findItem(R.id.nav_saved).setTitle(getString(
-                getResources().getIdentifier("saved" + MainActivity.currentLanguage, "string", getPackageName())));
-        menu.findItem(R.id.nav_aboutapp).setTitle(getString(
-                getResources().getIdentifier("about_app" + MainActivity.currentLanguage, "string", getPackageName())));
-        menu.findItem(R.id.nav_aboutus).setTitle(getString(
-                getResources().getIdentifier("about_us" + MainActivity.currentLanguage, "string", getPackageName())));
+        menu.findItem(R.id.nav_home).setTitle(getString(getResources().getIdentifier("home" + MainActivity.currentLanguage, "string", getPackageName())));
+        menu.findItem(R.id.nav_settings).setTitle(getString(getResources().getIdentifier("settings" + MainActivity.currentLanguage, "string", getPackageName())));
+        menu.findItem(R.id.nav_saved).setTitle(getString(getResources().getIdentifier("saved" + MainActivity.currentLanguage, "string", getPackageName())));
+        menu.findItem(R.id.nav_aboutapp).setTitle(getString(getResources().getIdentifier("about_app" + MainActivity.currentLanguage, "string", getPackageName())));
+        menu.findItem(R.id.nav_aboutus).setTitle(getString(getResources().getIdentifier("about_us" + MainActivity.currentLanguage, "string", getPackageName())));
     }
 
     // ---------------- POPUP FILTER (UNCHANGED) ----------------
 
     private void showFilterPopup() {
         FrameLayout root = findViewById(R.id.main); // Overlay for blur
+
         View overlay = new View(this);
         overlay.setBackgroundColor(Color.parseColor("#80000000")); // semi-transparent black
+
         root.addView(overlay, new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)); // Change background to another color
         root.setBackgroundColor(ContextCompat.getColor(this, R.color.blured_main_green));
+
         View popupView = getLayoutInflater().inflate(R.layout.popup_filter, null);
         float density = getResources().getDisplayMetrics().density;
         int widthInPx = (int) (200 * density); // 200dp width
+
         PopupWindow popupWindow = new PopupWindow(popupView, widthInPx, RecyclerView.LayoutParams.WRAP_CONTENT, true);
         popupWindow.setOutsideTouchable(true);
         popupWindow.setElevation(12);
         popupWindow.showAtLocation(root, Gravity.CENTER, 0, 0);
+
         TextView textView = popupView.findViewById(R.id.filterTitle);
         CheckBox checkHeader = popupView.findViewById(R.id.checkBoxHeader);
         CheckBox checkTopic = popupView.findViewById(R.id.checkBoxTopic);
         CheckBox checkKey = popupView.findViewById(R.id.checkBoxKey);
         Button applyButton = popupView.findViewById(R.id.buttonApply);
+
         int idtext = this.getResources().getIdentifier(("Boýunça_süzüň" + MainActivity.currentLanguage), "string", this.getPackageName());
         String text = this.getString(idtext);
         textView.setText(text);
+
         int idTM = this.getResources().getIdentifier(("Temaň_ady" + MainActivity.currentLanguage), "string", this.getPackageName());
         String textTM = this.getString(idTM);
         checkHeader.setText(textTM);
+
         int idEN = this.getResources().getIdentifier(("Tema" + MainActivity.currentLanguage), "string", this.getPackageName());
         String textEN = this.getString(idEN);
         checkTopic.setText(textEN);
+
         int idRU = this.getResources().getIdentifier(("Temaň_belgisi" + MainActivity.currentLanguage), "string", this.getPackageName());
         String textRU = this.getString(idRU);
         checkKey.setText(textRU);
+
         int idJP = this.getResources().getIdentifier(("Bolýar" + MainActivity.currentLanguage), "string", this.getPackageName());
         String textJP = this.getString(idJP);
         applyButton.setText(textJP);
+
         Typeface framd = ResourcesCompat.getFont(this, R.font.framd);
         checkHeader.setTypeface(framd);
         checkTopic.setTypeface(framd);
         checkKey.setTypeface(framd);
         applyButton.setTypeface(framd);
+
         checkHeader.setChecked(filterHeader);
         checkTopic.setChecked(filterTopic);
         checkKey.setChecked(filterKey);
+
         applyButton.setOnClickListener(v -> {
             filterHeader = checkHeader.isChecked();
             filterTopic = checkTopic.isChecked();
             filterKey = checkKey.isChecked();
+
             SharedPreferences.Editor editor = getSharedPreferences(PREFS_NAME, MODE_PRIVATE).edit();
             editor.putBoolean(PREF_HEADER, filterHeader);
             editor.putBoolean(PREF_TOPIC, filterTopic);
             editor.putBoolean(PREF_KEY, filterKey);
             editor.apply();
+
             applyCustomFilters(filterHeader, filterTopic, filterKey);
             popupWindow.dismiss();
             root.removeView(overlay); // Change background to another color
