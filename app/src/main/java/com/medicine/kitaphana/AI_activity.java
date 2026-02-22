@@ -305,12 +305,58 @@ public class AI_activity extends AppCompatActivity {
             return HtmlCompat.fromHtml("", HtmlCompat.FROM_HTML_MODE_LEGACY);
 
         String html = markdown
-                .replaceAll("(?m)^### (.+)$", "<b><big>$1</big></b>")
-                .replaceAll("(?m)^## (.+)$",  "<b><big><big>$1</big></big></b>")
-                .replaceAll("(?m)^# (.+)$",   "<b><big><big><big>$1</big></big></big></b>")
+                // ─── Headings ───
+                .replaceAll("(?m)^###### (.+)$", "<small><b>$1</b></small>")
+                .replaceAll("(?m)^##### (.+)$",  "<b>$1</b>")
+                .replaceAll("(?m)^#### (.+)$",   "<b><big>$1</big></b>")
+                .replaceAll("(?m)^### (.+)$",    "<b><big><big>$1</big></big></b>")
+                .replaceAll("(?m)^## (.+)$",     "<b><big><big><big>$1</big></big></big></b>")
+                .replaceAll("(?m)^# (.+)$",      "<b><big><big><big><big>$1</big></big></big></big></b>")
+
+                // ─── Bold + Italic combined ───
+                .replaceAll("\\*\\*\\*(.+?)\\*\\*\\*", "<b><i>$1</i></b>")
+                .replaceAll("___(.+?)___",             "<b><i>$1</i></b>")
+
+                // ─── Bold ───
                 .replaceAll("\\*\\*(.+?)\\*\\*", "<b>$1</b>")
+                .replaceAll("__(.+?)__",         "<b>$1</b>")
+
+                // ─── Italic ───
                 .replaceAll("\\*(.+?)\\*", "<i>$1</i>")
-                .replaceAll("(?m)^[•\\-] (.+)$", "&#8226; $1<br>")
+                .replaceAll("_(.+?)_",     "<i>$1</i>")
+
+                // ─── Strikethrough ───
+                .replaceAll("~~(.+?)~~", "<strike>$1</strike>")
+
+                // ─── Inline code ───
+                .replaceAll("`(.+?)`", "<tt>$1</tt>")
+
+                // ─── Blockquote ───
+                .replaceAll("(?m)^&gt; (.+)$",  "<blockquote>$1</blockquote>")
+                .replaceAll("(?m)^> (.+)$",     "<blockquote>$1</blockquote>")
+
+                // ─── Horizontal rule ───
+                .replaceAll("(?m)^---$",  "<br>──────────────<br>")
+                .replaceAll("(?m)^\\*\\*\\*$", "<br>──────────────<br>")
+                .replaceAll("(?m)^___$",  "<br>──────────────<br>")
+
+                // ─── Unordered lists ───
+                .replaceAll("(?m)^[•\\-\\*] (.+)$", "&#8226; $1<br>")
+
+                // ─── Ordered lists ───
+                .replaceAll("(?m)^\\d+\\. (.+)$", "&#8226; $1<br>")
+
+                // ─── Checkboxes ───
+                .replaceAll("(?m)^- \\[x\\] (.+)$", "☑ $1<br>")
+                .replaceAll("(?m)^- \\[ \\] (.+)$", "☐ $1<br>")
+
+                // ─── Links ───
+                .replaceAll("\\[(.+?)\\]\\((.+?)\\)", "<a href=\"$2\">$1</a>")
+
+                // ─── Images (remove, TextView can't render) ───
+                .replaceAll("!\\[.*?\\]\\(.*?\\)", "")
+
+                // ─── Line breaks ───
                 .replace("\n", "<br>");
 
         return HtmlCompat.fromHtml(html, HtmlCompat.FROM_HTML_MODE_LEGACY);
