@@ -246,7 +246,7 @@ public class AI_activity extends AppCompatActivity {
 
         GenerativeModel model = new GenerativeModel(
                 MODEL,                        // modelName
-                "AIzaSyDe4jLRchcGRLElIyjBck0QwHv6YZkFO2k",   // apiKey
+                "AIzaSyDe4jLRchcGRLElIyjBck0QwHv6YZkFO2k",   // apiKey // backUp=AIzaSyByns9ZqBAC4ISbxlYDjez5vdbvzCeBU2g
                 configBuilder.build(),        // generationConfig
                 null,                         // safetySettings
                 new RequestOptions(),         // requestOptions

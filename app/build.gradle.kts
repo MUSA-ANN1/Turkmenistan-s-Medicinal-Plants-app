@@ -10,8 +10,8 @@ android {
         applicationId = "com.medicine.kitaphana"
         minSdk = 24
         targetSdk = 35
-        versionCode = 5
-        versionName = "3"
+        versionCode = 6
+        versionName = "3.5.1"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
