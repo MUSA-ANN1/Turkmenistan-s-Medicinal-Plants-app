@@ -328,17 +328,20 @@ public class AI_activity extends AppCompatActivity {
                 // ─── Strikethrough ───
                 .replaceAll("~~(.+?)~~", "<strike>$1</strike>")
 
+                // ─── Code blocks (``` ... ```) MUST come before inline code ───
+                .replaceAll("(?s)```[a-zA-Z]*\\n(.*?)```", "<br><tt>$1</tt><br>")
+                .replaceAll("(?s)```(.*?)```",              "<br><tt>$1</tt><br>")
+
                 // ─── Inline code ───
                 .replaceAll("`(.+?)`", "<tt>$1</tt>")
 
                 // ─── Blockquote ───
-                .replaceAll("(?m)^&gt; (.+)$",  "<blockquote>$1</blockquote>")
-                .replaceAll("(?m)^> (.+)$",     "<blockquote>$1</blockquote>")
+                .replaceAll("(?m)^> (.+)$", "<blockquote>$1</blockquote>")
 
                 // ─── Horizontal rule ───
-                .replaceAll("(?m)^---$",  "<br>──────────────<br>")
-                .replaceAll("(?m)^\\*\\*\\*$", "<br>──────────────<br>")
-                .replaceAll("(?m)^___$",  "<br>──────────────<br>")
+                .replaceAll("(?m)^---$",         "<br>──────────────<br>")
+                .replaceAll("(?m)^\\*\\*\\*$",   "<br>──────────────<br>")
+                .replaceAll("(?m)^___$",         "<br>──────────────<br>")
 
                 // ─── Unordered lists ───
                 .replaceAll("(?m)^[•\\-\\*] (.+)$", "&#8226; $1<br>")
