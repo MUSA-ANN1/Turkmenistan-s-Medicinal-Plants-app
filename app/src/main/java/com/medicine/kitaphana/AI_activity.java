@@ -4,6 +4,8 @@ import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.text.Spanned;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -71,6 +73,7 @@ public class AI_activity extends AppCompatActivity {
     private static class Message {
         String text;
         boolean isUser;
+
         Message(String text, boolean isUser) {
             this.text = text;
             this.isUser = isUser;
@@ -86,6 +89,7 @@ public class AI_activity extends AppCompatActivity {
     private SharedPreferences sp;
     private ProgressBar loadingBar;
     private ImageButton sendButton;
+    private Handler typingHandler;
 
     DrawerLayout drawerLayout;
     NavigationView navigationView;
@@ -116,7 +120,12 @@ public class AI_activity extends AppCompatActivity {
         public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int pos) {
             Message msg = msgs.get(pos);
             if (holder instanceof AiHolder) {
-                ((AiHolder) holder).msg.setText(markdownToSpanned(msg.text));
+                // Only animate the last AI message
+                if (pos == msgs.size() - 1 && !msg.isUser) {
+                    typeTextAnimation(((AiHolder) holder).msg, markdownToSpanned(msg.text), 15);
+                } else {
+                    ((AiHolder) holder).msg.setText(markdownToSpanned(msg.text));
+                }
             } else {
                 ((UserHolder) holder).msg.setText(msg.text);
             }
@@ -129,6 +138,7 @@ public class AI_activity extends AppCompatActivity {
 
         class UserHolder extends RecyclerView.ViewHolder {
             TextView msg;
+
             UserHolder(View v) {
                 super(v);
                 msg = v.findViewById(R.id.messageText);
@@ -137,11 +147,40 @@ public class AI_activity extends AppCompatActivity {
 
         class AiHolder extends RecyclerView.ViewHolder {
             TextView msg;
+
             AiHolder(View v) {
                 super(v);
                 msg = v.findViewById(R.id.messageText);
             }
         }
+    }
+
+    // -------------------- Typing Animation --------------------
+    private void typeTextAnimation(TextView textView, Spanned spanned, int delayMs) {
+        // Cancel any previous animation
+        if (typingHandler != null) {
+            typingHandler.removeCallbacksAndMessages(null);
+        }
+        typingHandler = new Handler(Looper.getMainLooper());
+
+        final String fullText = spanned.toString();
+        final int[] index = {0};
+        textView.setText("");
+
+        Runnable runnable = new Runnable() {
+            @Override
+            public void run() {
+                if (index[0] <= fullText.length()) {
+                    textView.setText(fullText.substring(0, index[0]));
+                    index[0]++;
+                    typingHandler.postDelayed(this, delayMs);
+                } else {
+                    // Animation done — set full styled spanned text
+                    textView.setText(spanned);
+                }
+            }
+        };
+        typingHandler.post(runnable);
     }
 
     // -------------------- onCreate --------------------
@@ -172,13 +211,10 @@ public class AI_activity extends AppCompatActivity {
             return true;
         });
 
-        EditText userInput         = findViewById(R.id.user_input);
-        sendButton                 = findViewById(R.id.send_button);
-        loadingBar                 = findViewById(R.id.loading_bar);
-        chatRecycler               = findViewById(R.id.chatRecycler);
-        DrawerLayout drawerLayout  = findViewById(R.id.drawer_layout);
-        NavigationView navView     = findViewById(R.id.navigation_view);
-        View burgerIcon            = findViewById(R.id.burger_icon);
+        EditText userInput = findViewById(R.id.user_input);
+        sendButton = findViewById(R.id.send_button);
+        loadingBar = findViewById(R.id.loading_bar);
+        chatRecycler = findViewById(R.id.chatRecycler);
 
         sp = getSharedPreferences("chat_cache", MODE_PRIVATE);
         messages = new ArrayList<>();
@@ -191,12 +227,6 @@ public class AI_activity extends AppCompatActivity {
 
         // Init Gemini
         initGemini();
-
-        burgerIcon.setOnClickListener(v -> drawerLayout.open());
-        navView.setNavigationItemSelectedListener(item -> {
-            drawerLayout.close();
-            return true;
-        });
 
         // Restore cached chat
         String saved = sp.getString("messages", null);
@@ -239,20 +269,19 @@ public class AI_activity extends AppCompatActivity {
         configBuilder.maxOutputTokens = 500;
         configBuilder.temperature = 0.7f;
 
-        // System instruction as Content
         Content systemInstruction = new Content.Builder()
                 .addText(SYSTEM_PROMPT)
                 .build();
 
         GenerativeModel model = new GenerativeModel(
-                MODEL,                        // modelName
-                API_KEY.Key,   // apiKey // backUp=Key_back
-                configBuilder.build(),        // generationConfig
-                null,                         // safetySettings
-                new RequestOptions(),         // requestOptions
-                null,                         // tools
-                null,                         // toolConfig
-                systemInstruction             // systemInstruction
+                MODEL,
+                API_KEY.Key,//backUp = Key_back
+                configBuilder.build(),
+                null,
+                new RequestOptions(),
+                null,
+                null,
+                systemInstruction
         );
 
         GenerativeModelFutures modelFutures = GenerativeModelFutures.from(model);
@@ -307,30 +336,30 @@ public class AI_activity extends AppCompatActivity {
         String html = markdown
                 // ─── Headings ───
                 .replaceAll("(?m)^###### (.+)$", "<small><b>$1</b></small>")
-                .replaceAll("(?m)^##### (.+)$",  "<b>$1</b>")
-                .replaceAll("(?m)^#### (.+)$",   "<b><big>$1</big></b>")
-                .replaceAll("(?m)^### (.+)$",    "<b><big><big>$1</big></big></b>")
-                .replaceAll("(?m)^## (.+)$",     "<b><big><big><big>$1</big></big></big></b>")
-                .replaceAll("(?m)^# (.+)$",      "<b><big><big><big><big>$1</big></big></big></big></b>")
+                .replaceAll("(?m)^##### (.+)$", "<b>$1</b>")
+                .replaceAll("(?m)^#### (.+)$", "<b><big>$1</big></b>")
+                .replaceAll("(?m)^### (.+)$", "<b><big><big>$1</big></big></b>")
+                .replaceAll("(?m)^## (.+)$", "<b><big><big><big>$1</big></big></big></b>")
+                .replaceAll("(?m)^# (.+)$", "<b><big><big><big><big>$1</big></big></big></big></b>")
 
                 // ─── Bold + Italic combined ───
                 .replaceAll("\\*\\*\\*(.+?)\\*\\*\\*", "<b><i>$1</i></b>")
-                .replaceAll("___(.+?)___",             "<b><i>$1</i></b>")
+                .replaceAll("___(.+?)___", "<b><i>$1</i></b>")
 
                 // ─── Bold ───
                 .replaceAll("\\*\\*(.+?)\\*\\*", "<b>$1</b>")
-                .replaceAll("__(.+?)__",         "<b>$1</b>")
+                .replaceAll("__(.+?)__", "<b>$1</b>")
 
                 // ─── Italic ───
                 .replaceAll("\\*(.+?)\\*", "<i>$1</i>")
-                .replaceAll("_(.+?)_",     "<i>$1</i>")
+                .replaceAll("_(.+?)_", "<i>$1</i>")
 
                 // ─── Strikethrough ───
                 .replaceAll("~~(.+?)~~", "<strike>$1</strike>")
 
                 // ─── Code blocks (``` ... ```) MUST come before inline code ───
                 .replaceAll("(?s)```[a-zA-Z]*\\n(.*?)```", "<br><tt>$1</tt><br>")
-                .replaceAll("(?s)```(.*?)```",              "<br><tt>$1</tt><br>")
+                .replaceAll("(?s)```(.*?)```", "<br><tt>$1</tt><br>")
 
                 // ─── Inline code ───
                 .replaceAll("`(.+?)`", "<tt>$1</tt>")
@@ -339,9 +368,9 @@ public class AI_activity extends AppCompatActivity {
                 .replaceAll("(?m)^> (.+)$", "<blockquote>$1</blockquote>")
 
                 // ─── Horizontal rule ───
-                .replaceAll("(?m)^---$",         "<br>──────────────<br>")
-                .replaceAll("(?m)^\\*\\*\\*$",   "<br>──────────────<br>")
-                .replaceAll("(?m)^___$",         "<br>──────────────<br>")
+                .replaceAll("(?m)^---$", "<br>──────────────<br>")
+                .replaceAll("(?m)^\\*\\*\\*$", "<br>──────────────<br>")
+                .replaceAll("(?m)^___$", "<br>──────────────<br>")
 
                 // ─── Unordered lists ───
                 .replaceAll("(?m)^[•\\-\\*] (.+)$", "&#8226; $1<br>")
@@ -372,7 +401,7 @@ public class AI_activity extends AppCompatActivity {
             int start = Math.max(0, messages.size() - 50);
             for (int i = start; i < messages.size(); i++) {
                 JSONObject o = new JSONObject();
-                o.put("text",   messages.get(i).text);
+                o.put("text", messages.get(i).text);
                 o.put("isUser", messages.get(i).isUser);
                 arr.put(o);
             }

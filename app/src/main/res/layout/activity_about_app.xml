@@ -75,6 +75,33 @@
                     android:orientation="vertical"
                     android:paddingBottom="38dp">
 
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center"
+                    android:layout_marginBottom="25dp"
+                    android:layout_marginTop="7dp">
+
+                    <ImageView
+                        android:layout_width="85dp"
+                        android:layout_height="85dp"
+                        android:src="@drawable/baydak"
+                        android:layout_margin="15dp"/>
+                    <ImageView
+                        android:layout_width="125dp"
+                        android:layout_height="150dp"
+                        android:src="@drawable/awtor"/>
+
+                    <ImageView
+                        android:layout_width="85dp"
+                        android:layout_height="85dp"
+                        android:src="@drawable/gerp"
+                        android:layout_margin="7dp"/>
+
+                </LinearLayout>
+
+
                     <TextView
                         android:id="@+id/about_app"
                         android:layout_width="match_parent"

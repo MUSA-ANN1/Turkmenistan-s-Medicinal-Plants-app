@@ -60,7 +60,7 @@ public class AboutUs extends AppCompatActivity {
 
 
         TextView moses = findViewById(R.id.moses_ac);
-        TextView smile = findViewById(R.id.smile_ac);
+        /*TextView smile = findViewById(R.id.smile_ac);*/
 
         String text_m = moses.getText().toString();
         SpannableString string_m = new SpannableString(text_m);
@@ -80,7 +80,7 @@ public class AboutUs extends AppCompatActivity {
 
 
 
-        String text_s = smile.getText().toString();
+        /*String text_s = smile.getText().toString();
         SpannableString string_s = new SpannableString(text_s);
 
         ClickableSpan clickableSpan_s = new ClickableSpan() {
@@ -94,7 +94,7 @@ public class AboutUs extends AppCompatActivity {
         string_s.setSpan(clickableSpan_s, 0, text_s.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
 
         smile.setText(string_s);
-        smile.setMovementMethod(LinkMovementMethod.getInstance());
+        smile.setMovementMethod(LinkMovementMethod.getInstance());*/
     }
 
 
