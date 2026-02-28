@@ -55,22 +55,25 @@ public class Settings extends AppCompatActivity {
             if (item.getItemId() == R.id.nav_home) {
                 startActivity(new Intent(this, MainActivity.class));
                 drawerLayout.closeDrawer(GravityCompat.START);
+                finish();
                 return true;
             } else if (item.getItemId() == R.id.nav_settings) {
-                /*startActivity(new Intent(this, Settings.class));*/
                 drawerLayout.closeDrawer(GravityCompat.START);
                 return true;
             } else if (item.getItemId() == R.id.nav_saved) {
                 startActivity(new Intent(this, Saved.class));
                 drawerLayout.closeDrawer(GravityCompat.START);
+                finish();
                 return true;
             } else if (item.getItemId() == R.id.nav_aboutapp) {
                 startActivity(new Intent(this, AboutApp.class));
                 drawerLayout.closeDrawer(GravityCompat.START);
+                finish();
                 return true;
             } else if (item.getItemId() == R.id.nav_aboutus) {
                 startActivity(new Intent(this, AboutUs.class));
                 drawerLayout.closeDrawer(GravityCompat.START);
+                finish();
                 return true;
             } else {
                 return false;

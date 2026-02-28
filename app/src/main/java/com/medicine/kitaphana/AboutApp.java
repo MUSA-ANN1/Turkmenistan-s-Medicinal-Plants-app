@@ -40,14 +40,32 @@ public class AboutApp extends AppCompatActivity {
         );
 
         navigationView.setNavigationItemSelectedListener(item -> {
-            int id = item.getItemId();
-            if (id == R.id.nav_home) startActivity(new Intent(this, MainActivity.class));
-            else if (id == R.id.nav_saved) startActivity(new Intent(this, Saved.class));
-            else if (id == R.id.nav_settings) startActivity(new Intent(this, Settings.class));
-            else if (id == R.id.nav_aboutapp) drawerLayout.closeDrawer(GravityCompat.START);
-            else if (id == R.id.nav_aboutus) startActivity(new Intent(this, AboutUs.class));
-            drawerLayout.closeDrawer(GravityCompat.START);
-            return true;
+            if (item.getItemId() == R.id.nav_home) {
+                startActivity(new Intent(this, MainActivity.class));
+                drawerLayout.closeDrawer(GravityCompat.START);
+                finish();
+                return true;
+            } else if (item.getItemId() == R.id.nav_settings) {
+                startActivity(new Intent(this, Settings.class));
+                drawerLayout.closeDrawer(GravityCompat.START);
+                finish();
+                return true;
+            } else if (item.getItemId() == R.id.nav_saved) {
+                startActivity(new Intent(this, Saved.class));
+                drawerLayout.closeDrawer(GravityCompat.START);
+                finish();
+                return true;
+            } else if (item.getItemId() == R.id.nav_aboutapp) {
+                drawerLayout.closeDrawer(GravityCompat.START);
+                return true;
+            } else if (item.getItemId() == R.id.nav_aboutus) {
+                startActivity(new Intent(this, AboutUs.class));
+                drawerLayout.closeDrawer(GravityCompat.START);
+                finish();
+                return true;
+            } else {
+                return false;
+            }
         });
     }
 

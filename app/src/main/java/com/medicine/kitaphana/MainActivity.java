@@ -90,6 +90,12 @@ public class MainActivity extends AppCompatActivity {
             startActivity(intent);
         });
 
+        FloatingActionButton btnImage = findViewById(R.id.btn_image);
+        btnImage.setOnClickListener(v -> {
+            Intent intent = new Intent(MainActivity.this, Surat.class);
+            startActivity(intent);
+        });
+
 
         drawerLayout = findViewById(R.id.drawer_layout);
         navigationView = findViewById(R.id.navigation_view);
@@ -104,7 +110,6 @@ public class MainActivity extends AppCompatActivity {
         // Handle drawer menu item clicks
         navigationView.setNavigationItemSelectedListener(item -> {
             if (item.getItemId() == R.id.nav_home) {
-                /*startActivity(new Intent(this, MainActivity.class));*/
                 drawerLayout.closeDrawer(GravityCompat.START);
                 return true;
             } else if (item.getItemId() == R.id.nav_settings) {
