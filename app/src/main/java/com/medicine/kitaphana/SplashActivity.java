@@ -1,18 +1,23 @@
 package com.medicine.kitaphana;
 
 import android.animation.ObjectAnimator;
+import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.LinearInterpolator;
+import android.widget.ImageView;
+import android.widget.ShareActionProvider;
 import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
 
 public class SplashActivity extends AppCompatActivity {
 
+    @SuppressLint("MissingInflatedId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -21,6 +26,18 @@ public class SplashActivity extends AppCompatActivity {
         View meshContainer = findViewById(R.id.meshContainer);
         CardView logo = findViewById(R.id.logo);
         TextView appName = findViewById(R.id.appName);
+        ImageView imageView = findViewById(R.id.logo_i);
+        String season = SeasonIconWorker.getCurrentSeason();
+
+        if (getSharedPreferences("settings", MODE_PRIVATE).getBoolean("auto_season_icon", false)) {
+            switch (season) {
+                case "winter":  imageView.setImageResource(R.drawable.icon_app_w);  break;
+                case "spring":  imageView.setImageResource(R.drawable.icon_app_s);  break;
+                case "summer":  imageView.setImageResource(R.drawable.icon_app_su);  break;
+                case "autumn":  imageView.setImageResource(R.drawable.icon_app_a);  break;
+                case "ramadan": imageView.setImageResource(R.drawable.icon_app_r); break;
+            }
+        }
 
         // 1. Rotate the mesh slowly for the shifting color effect
         ObjectAnimator rotateMesh = ObjectAnimator.ofFloat(meshContainer, "rotation", 0f, 180f);
@@ -57,6 +74,6 @@ public class SplashActivity extends AppCompatActivity {
                 startActivity(intent);
                 finish();
             }
-        }, 4000); // 4 seconds delay to appreciate the mesh effect
+        }, 3000); // 4 seconds delay to appreciate the mesh effect
     }
 }

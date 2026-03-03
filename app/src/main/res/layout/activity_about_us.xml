@@ -131,6 +131,7 @@
                                         android:orientation="vertical">
 
                                         <ImageView
+                                            android:id="@+id/musa"
                                             android:layout_width="100dp"
                                             android:layout_height="100dp"
                                             android:layout_marginTop="10dp"

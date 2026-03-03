@@ -51,6 +51,28 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/imageView1"/>
 
+        <!-- Slogan TextView shown when chat is empty -->
+        <TextView
+            android:id="@+id/tv_slogan"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginStart="24dp"
+            android:layout_marginEnd="24dp"
+            android:layout_marginBottom="24dp"
+            android:text="text"
+            android:gravity="center|right"
+            android:textColor="@color/main_green"
+            android:textSize="40sp"
+            android:fontFamily="@font/framd"
+            android:alpha="1.0"
+            android:visibility="visible"
+            app:layout_constraintBottom_toTopOf="@id/inputLayout"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/imageView1"
+            app:layout_constraintVertical_bias="0.75" />
+
         <ImageView
             android:id="@+id/imageView"
             android:layout_width="match_parent"

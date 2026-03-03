@@ -22,57 +22,119 @@
         tools:targetApi="31"
         android:networkSecurityConfig="@xml/network_security_config" >
 
-        <activity
-        android:name=".ResultActivity"
-        android:exported="false" />
-
-        <activity
-            android:name=".Surat"
-            android:exported="false" />
+        <activity android:name=".ResultActivity" android:exported="false" android:screenOrientation="portrait" />
+        <activity android:name=".Surat" android:exported="false" android:screenOrientation="portrait" />
         <activity
             android:name=".AI_activity"
             android:exported="false"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize|stateHidden" />
+
+        <!-- ✅ SplashActivity: NO intent-filter here anymore -->
         <activity
             android:name=".SplashActivity"
             android:exported="true"
             android:screenOrientation="portrait"
-            android:theme="@style/Theme.App.Launcher" >
+            android:theme="@style/Theme.App.Launcher" />
+
+        <activity android:name=".Saved" android:exported="false" android:screenOrientation="portrait" />
+        <activity android:name=".AboutUs" android:exported="false" android:screenOrientation="portrait" />
+        <activity android:name=".AboutApp" android:exported="false" android:screenOrientation="portrait" />
+        <activity android:name=".Settings" android:exported="false" android:screenOrientation="portrait" />
+        <activity android:name=".Tema" android:exported="false" android:screenOrientation="portrait" />
+        <activity android:name=".ici" android:exported="false" android:screenOrientation="portrait" />
+        <activity android:name=".MainActivity" android:exported="true" android:screenOrientation="portrait" />
+
+        <!-- ✅ DEFAULT alias (enabled by default) -->
+        <activity-alias
+            android:name=".SplashDefault"
+            android:targetActivity=".SplashActivity"
+            android:enabled="true"
+            android:exported="true"
+            android:theme="@style/Theme.App.Launcher"
+            android:icon="@mipmap/ic_launcher"
+            android:roundIcon="@mipmap/ic_launcher_round">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-        </activity>
-        <activity
-            android:name=".Saved"
-            android:exported="false"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".AboutUs"
-            android:exported="false"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".AboutApp"
-            android:exported="false"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".Settings"
-            android:exported="false"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".Tema"
-            android:exported="false"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".ici"
-            android:exported="false"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".MainActivity"
+        </activity-alias>
+
+        <!-- ❄️ WINTER alias -->
+        <activity-alias
+            android:name=".SplashWinter"
+            android:targetActivity=".SplashActivity"
+            android:enabled="false"
             android:exported="true"
-            android:screenOrientation="portrait" />
+            android:theme="@style/Theme.App.Launcher"
+            android:icon="@mipmap/ic_launcher_winter"
+            android:roundIcon="@mipmap/ic_launcher_winter_round">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity-alias>
+
+        <!-- 🌸 SPRING alias -->
+        <activity-alias
+            android:name=".SplashSpring"
+            android:targetActivity=".SplashActivity"
+            android:enabled="false"
+            android:exported="true"
+            android:theme="@style/Theme.App.Launcher"
+            android:icon="@mipmap/ic_launcher_spring"
+            android:roundIcon="@mipmap/ic_launcher_spring_round">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity-alias>
+
+        <!-- ☀️ SUMMER alias -->
+        <activity-alias
+            android:name=".SplashSummer"
+            android:targetActivity=".SplashActivity"
+            android:enabled="false"
+            android:exported="true"
+            android:theme="@style/Theme.App.Launcher"
+            android:icon="@mipmap/ic_launcher_summer"
+            android:roundIcon="@mipmap/ic_launcher_summer_round">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity-alias>
+
+        <!-- 🍂 AUTUMN alias -->
+        <activity-alias
+            android:name=".SplashAutumn"
+            android:targetActivity=".SplashActivity"
+            android:enabled="false"
+            android:exported="true"
+            android:theme="@style/Theme.App.Launcher"
+            android:icon="@mipmap/ic_launcher_autumn"
+            android:roundIcon="@mipmap/ic_launcher_autumn_round">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity-alias>
+
+        <!-- 🌙 RAMADAN alias -->
+        <activity-alias
+            android:name=".SplashRamadan"
+            android:targetActivity=".SplashActivity"
+            android:enabled="false"
+            android:exported="true"
+            android:theme="@style/Theme.App.Launcher"
+            android:icon="@mipmap/ic_launcher_ramadan"
+            android:roundIcon="@mipmap/ic_launcher_ramadan_round">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity-alias>
+
     </application>
 
 </manifest>

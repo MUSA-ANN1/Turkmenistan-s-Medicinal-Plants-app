@@ -1,3 +1,6 @@
+import java.util.Properties
+import java.io.FileInputStream
+
 plugins {
     alias(libs.plugins.android.application)
 }
@@ -14,6 +17,17 @@ android {
         versionName = "3.5.2"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
+        val localProps = Properties()
+        localProps.load(FileInputStream(rootProject.file("local.properties")))
+
+        buildConfigField("String", "QAMAR_API_KEY", "\"${localProps["QAMAR_API_KEY"]}\"")
+        buildConfigField("String", "GEMINI_API_KEY", "\"${localProps["GEMINI_API_KEY"]}\"")
+        buildConfigField("String", "GEMINI_API_KEY_BACK_UP", "\"${localProps["GEMINI_API_KEY_BACK_UP"]}\"")
+    }
+
+    buildFeatures {
+        buildConfig = true  // ← add this if not already there
     }
 
     buildTypes {
@@ -43,6 +57,8 @@ dependencies {
     implementation("androidx.camera:camera-camera2:1.3.1")
     implementation("androidx.camera:camera-lifecycle:1.3.1")
     implementation("androidx.camera:camera-view:1.3.1")
+
+    implementation("androidx.work:work-runtime:2.9.0")
 
     implementation(libs.appcompat)
     implementation(libs.material)

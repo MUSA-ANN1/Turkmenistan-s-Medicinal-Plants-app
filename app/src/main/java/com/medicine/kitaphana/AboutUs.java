@@ -133,5 +133,5 @@ public class AboutUs extends AppCompatActivity {
         menu.findItem(R.id.nav_aboutus).setTitle(getString(
                 getResources().getIdentifier("about_us" + MainActivity.currentLanguage, "string", getPackageName())));
     
-}
+    }
 }

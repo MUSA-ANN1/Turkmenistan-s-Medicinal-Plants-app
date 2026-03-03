@@ -1,5 +1,8 @@
 package com.medicine.kitaphana;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
+import android.animation.ObjectAnimator;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.Intent;
@@ -26,6 +29,7 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.medicine.kitaphana.BuildConfig;
 import com.google.ai.client.generativeai.type.RequestOptions;
 import com.google.android.material.navigation.NavigationView;
 import com.google.ai.client.generativeai.GenerativeModel;
@@ -67,20 +71,34 @@ public class AI_activity extends AppCompatActivity {
     private static final String DEVELOPER_INFO =
             "Bu programmany Musa Annagulyýew döretdi.\n" +
                     "Musa Android developer, CS student, 3D/AR höwesjeňi.\n" +
-                    "Başarnyklary: Android Studio (Java/Kotlin), Jetpack Compose, AR Foundation, Python, JavaScript, 3ds Max, AutoCAD, Photoshop, Illustrator.\n" +
+                    "Doglan senesi: 05.10.2010;\n" +
+                    "Ýaşaýan ýeri: Türkmenistan;\n" +
+                    "Okaýan mekdebi (2016-2028-nji ýyllda): Balkan welaýatynyň Balkanabat şäheriniň daşary ýurt dillerine ýöriteleşdirilen 3-nji orta mekdebiniň 10-njy \"B\" synp okuwçysy (2025-2026 ýyldaky maglumat);\n" +
+                    "Başarnyklary: Android Studio (Java/Kotlin), Jetpack Compose, AR Foundation, Python, JavaScript, HTML, CSS, 3ds Max, AutoCAD, Photoshop, Illustrator, Networking.\n" +
                     "Çap edilen goşundylary:\n" +
                     "- Türkmenistanyň Dermanlyk Ösümlikleri (offline kitap, 5 dil)\n" +
                     "- Berk Bilim (mental arifmetika + karýera maslahatçysy)\n" +
-                    "Habarlaşmak: musa.annaguliev@gmail.com | Telegram: @Mu4asa";
+                    "Habarlaşmak: musa.annaguliev@gmail.com | Telegram: @Mu4asa | +993 61 192383 | Instagram: @musa.annaguliev";
 
     private static final String SYSTEM_PROMPT =
-            "Seniň adyň Ösümlik Bilimi 🌿\n" +
+            "Seniň adyň TakykAI 🌿\n" +
                     "Sen peýdaly we dostlukly AI kömekçi.\n" +
                     "Ulanyjy haýsy dilde ýazsa şol dilde jogap ber.\n" +
                     "Jogaplaryňy Markdown formatda we emojiler bilen ýaz.\n" +
                     "Gysgaça we anyk jogap ber.\n\n" +
-                    "Eger ulanyjy developer, Musa ýa-da programma barada sorasa şu maglumaty ulan:\n" +
+                    "Eger ulanyjy developer, Musa ýa-da programma barada sorasa şu maglumaty ulan (Musa barada hemme maglumaty ulanyjy soramasa berme, diňe gerekli (ulanyjynyň soran) maglumaty ber):\n" +
                     DEVELOPER_INFO;
+
+    // ── Slogans for the welcome animation ──
+    private static final String[] SLOGANS = {
+            "TakykAI, Tiz, Takyk, Düşnükli jogaplar berýär.",
+            "TakykAI, Islendik soraglaryňyza jogap berýän.",
+            "TakykAI, Akylly kömekçiňiz, hemişe taýyn.",
+            "TakykAI, Maglumaty çalt tapyň, wagt ýitirme.",
+            "TakykAI, Soragyňyz bar bolsa, men şu ýerde.",
+            "TakykAI, Bilim bilen güýçlendirilen kömekçi.",
+            "TakykAI, Her soraga dogry jogap."
+    };
 
     // -------------------- Data Model --------------------
     private static class Message {
@@ -100,12 +118,16 @@ public class AI_activity extends AppCompatActivity {
     private ChatAdapter adapter;
     private RecyclerView chatRecycler;
     private SharedPreferences sp;
-    private SharedPreferences modelPrefs;   // separate prefs for model selection
+    private SharedPreferences modelPrefs;
     private ProgressBar loadingBar;
     private ImageButton sendButton;
     private TextView btnModelSelector;
+    private TextView tvSlogan;
     private Handler typingHandler;
-    private String currentModel;            // MODEL_GEMINI or MODEL_QAMAR
+    private Handler sloganHandler;
+    private String currentModel;
+    private int currentSloganIndex = 0;
+    private boolean sloganVisible = true;
 
     DrawerLayout drawerLayout;
     NavigationView navigationView;
@@ -162,7 +184,7 @@ public class AI_activity extends AppCompatActivity {
         }
     }
 
-    // -------------------- Typing Animation --------------------
+    // -------------------- Typing Animation (chat bubbles) --------------------
     private void typeTextAnimation(TextView textView, Spanned spanned, int delayMs) {
         if (typingHandler != null) typingHandler.removeCallbacksAndMessages(null);
         typingHandler = new Handler(Looper.getMainLooper());
@@ -186,6 +208,135 @@ public class AI_activity extends AppCompatActivity {
         typingHandler.post(runnable);
     }
 
+    // -------------------- Slogan Typewriter Animation --------------------
+
+    /**
+     * Starts the looping slogan animation on tvSlogan.
+     * Each slogan is typed char-by-char, then the final "." blinks 3×,
+     * then we move to the next slogan.
+     */
+    private void startSloganLoop() {
+        if (sloganHandler != null) sloganHandler.removeCallbacksAndMessages(null);
+        sloganHandler = new Handler(Looper.getMainLooper());
+        currentSloganIndex = 0;
+        animateSlogan();
+    }
+
+    private void animateSlogan() {
+        if (!sloganVisible || tvSlogan == null) return;
+
+        String full = SLOGANS[currentSloganIndex];
+
+        // Separate body (without trailing dot) and dot
+        final String body;
+        final boolean hasDot;
+        if (full.endsWith(".")) {
+            body = full.substring(0, full.length() - 1);
+            hasDot = true;
+        } else {
+            body = full;
+            hasDot = false;
+        }
+
+        tvSlogan.setText("");
+        final int[] index = {0};
+        // Type speed: ~40ms per char feels natural for big display text
+        final int charDelay = 40;
+
+        Runnable typingRunnable = new Runnable() {
+            @Override
+            public void run() {
+                if (!sloganVisible) return;
+                if (index[0] <= body.length()) {
+                    tvSlogan.setText(body.substring(0, index[0]));
+                    index[0]++;
+                    sloganHandler.postDelayed(this, charDelay);
+                } else {
+                    // Typing done — now blink the dot then proceed
+                    if (hasDot) {
+                        blinkDot(body, 0);
+                    } else {
+                        scheduleNextSlogan();
+                    }
+                }
+            }
+        };
+        sloganHandler.post(typingRunnable);
+    }
+
+    /**
+     * Blinks the "." at the end of the slogan 3 times (on/off each 600ms),
+     * leaves it visible at the end, then schedules the next slogan.
+     */
+    private void blinkDot(String body, int blinkCount) {
+        if (!sloganVisible || tvSlogan == null) return;
+
+        final int totalBlinks = 3; // 3 full on-off cycles
+        final int blinkOnMs  = 600;
+        final int blinkOffMs = 600;
+
+        if (blinkCount >= totalBlinks) {
+            // Leave dot visible, then go to next
+            tvSlogan.setText(body + ".");
+            scheduleNextSlogan();
+            return;
+        }
+
+        // Show dot OFF
+        tvSlogan.setText(body);
+        sloganHandler.postDelayed(() -> {
+            if (!sloganVisible) return;
+            // Show dot ON
+            tvSlogan.setText(body + ".");
+            sloganHandler.postDelayed(() ->
+                    blinkDot(body, blinkCount + 1), blinkOnMs);
+        }, blinkOffMs);
+    }
+
+    /** Waits 800ms then advances to the next slogan */
+    private void scheduleNextSlogan() {
+        sloganHandler.postDelayed(() -> {
+            if (!sloganVisible) return;
+            currentSloganIndex = (currentSloganIndex + 1) % SLOGANS.length;
+            animateSlogan();
+        }, 800);
+    }
+
+    /** Fades out the slogan TextView over 400ms and stops the loop */
+    private void hideSloganAnimated() {
+        if (tvSlogan == null || tvSlogan.getVisibility() != View.VISIBLE) return;
+        sloganVisible = false;
+        if (sloganHandler != null) sloganHandler.removeCallbacksAndMessages(null);
+
+        ObjectAnimator fadeOut = ObjectAnimator.ofFloat(tvSlogan, "alpha", 2.8f, 0f);
+        fadeOut.setDuration(400);
+        fadeOut.addListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                tvSlogan.setVisibility(View.GONE);
+
+                // Restore cached chat
+                String saved = sp.getString("messages", null);
+                if (saved != null) {
+                    try {
+                        JSONArray arr = new JSONArray(saved);
+                        for (int i = 0; i < arr.length(); i++) {
+                            JSONObject obj = arr.getJSONObject(i);
+                            messages.add(new Message(obj.getString("text"), obj.getBoolean("isUser")));
+                        }
+                        adapter.notifyDataSetChanged();
+                        if (!messages.isEmpty()) {
+                            chatRecycler.scrollToPosition(messages.size() - 1);
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        });
+        fadeOut.start();
+    }
+
     // -------------------- onCreate --------------------
     @SuppressLint("CutPasteId")
     @Override
@@ -196,6 +347,7 @@ public class AI_activity extends AppCompatActivity {
         drawerLayout   = findViewById(R.id.drawer_layout);
         navigationView = findViewById(R.id.navigation_view);
         burgerIcon     = findViewById(R.id.burger_icon);
+        tvSlogan       = findViewById(R.id.tv_slogan);
 
         updateDrawerMenuTitles();
 
@@ -257,27 +409,29 @@ public class AI_activity extends AppCompatActivity {
         // Init Gemini (always init it; we switch routing at send time)
         initGemini();
 
-        // Restore cached chat
-        String saved = sp.getString("messages", null);
-        if (saved != null) {
-            try {
-                JSONArray arr = new JSONArray(saved);
-                for (int i = 0; i < arr.length(); i++) {
-                    JSONObject obj = arr.getJSONObject(i);
-                    messages.add(new Message(obj.getString("text"), obj.getBoolean("isUser")));
-                }
-                adapter.notifyDataSetChanged();
-                if (!messages.isEmpty())
-                    chatRecycler.scrollToPosition(messages.size() - 1);
-            } catch (Exception e) {
-                e.printStackTrace();
+
+
+        // ── Always show slogan on open, hide when user focuses EditText ──
+        tvSlogan.setVisibility(View.VISIBLE);
+        tvSlogan.setAlpha(1f);
+        sloganVisible = true;
+        startSloganLoop();
+
+        userInput.setOnFocusChangeListener((v, hasFocus) -> {
+            if (hasFocus && sloganVisible) {
+                hideSloganAnimated();
             }
-        }
+        });
 
         // Send button
         sendButton.setOnClickListener(v -> {
             String query = userInput.getText().toString().trim();
             if (query.isEmpty()) return;
+
+            // Also hide slogan if somehow still visible when send is pressed
+            if (sloganVisible) {
+                hideSloganAnimated();
+            }
 
             messages.add(new Message(query, true));
             adapter.notifyItemInserted(messages.size() - 1);
@@ -335,7 +489,7 @@ public class AI_activity extends AppCompatActivity {
 
         GenerativeModel model = new GenerativeModel(
                 GEMINI_MODEL,
-                API_KEY.Key, // Back_Up = API_KEY.Key_Back
+                BuildConfig.GEMINI_API_KEY,
                 configBuilder.build(),
                 null,
                 new RequestOptions(),
@@ -364,7 +518,7 @@ public class AI_activity extends AppCompatActivity {
 
             @Override
             public void onFailure(@NonNull Throwable t) {
-                final String error = "❌ " + t.getClass().getSimpleName() + ": " + t.getMessage();
+                final String error = "❌ Haýyş edýäs, internediňizi barlaň ýa-da soňrak täzeden synanyşyň";
                 runOnUiThread(() -> onAiResponse(error));
             }
         }, executor);
@@ -412,7 +566,7 @@ public class AI_activity extends AppCompatActivity {
                 HttpURLConnection conn = (HttpURLConnection) url.openConnection();
                 conn.setRequestMethod("POST");
                 conn.setRequestProperty("Content-Type", "application/json");
-                conn.setRequestProperty("Authorization", "Bearer " + API_KEY.Key_Qamar);
+                conn.setRequestProperty("Authorization", "Bearer " + BuildConfig.QAMAR_API_KEY);
                 conn.setDoOutput(true);
                 conn.setConnectTimeout(15000);
                 conn.setReadTimeout(30000);
@@ -448,14 +602,15 @@ public class AI_activity extends AppCompatActivity {
                     String line;
                     while ((line = br.readLine()) != null) response.append(line);
                     br.close();
-                    final String error = "❌ Qamar error " + responseCode + ": " + response;
+
+                    final String error = "❌ Haýyş edýäs, internediňizi barlaň ýa-da soňrak täzeden synanyşyň";
                     runOnUiThread(() -> onAiResponse(error));
                 }
 
                 conn.disconnect();
 
             } catch (Exception e) {
-                final String error = "❌ Qamar: " + e.getMessage();
+                final String error = "❌ Haýyş edýäs, internediňizi barlaň ýa-da soňrak täzeden synanyşyň";
                 runOnUiThread(() -> onAiResponse(error));
             }
         });
@@ -558,6 +713,7 @@ public class AI_activity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
         if (typingHandler != null) typingHandler.removeCallbacksAndMessages(null);
+        if (sloganHandler != null) sloganHandler.removeCallbacksAndMessages(null);
     }
 
     private void updateDrawerMenuTitles() {

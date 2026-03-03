@@ -87,16 +87,79 @@
                         android:textColor="@color/kitaplar"
                         android:textSize="25dp" />
 
-                    <ImageButton
+                    <androidx.cardview.widget.CardView
+                        android:id="@+id/cardgeneral"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
                         android:layout_margin="5dp"
-                        android:padding="15dp"
-                        android:id="@+id/language"
-                        android:layout_width="60dp"
-                        android:layout_height="60dp"
-                        android:background="@drawable/togolok"
-                        android:scaleType="fitCenter"
-                        android:src="@drawable/baseline_language_24"
-                        app:tint="@color/main_green" />
+                        app:cardCornerRadius="12dp"
+                        app:cardBackgroundColor="@color/main_green">
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"
+                            android:gravity="center_vertical">
+                        <TextView
+                            android:id="@+id/general"
+                            android:layout_width="match_parent"
+                            android:layout_height="30dp"
+                            android:layout_margin="5dp"
+                            android:fontFamily="@font/framd"
+                            android:gravity="bottom"
+                            android:paddingLeft="10dp"
+                            android:text="General management"
+                            android:textColor="@color/whitish_green"
+                            android:textSize="15dp" />
+
+                        <ImageButton
+                            android:layout_marginStart="5dp"
+                            android:layout_marginBottom="5dp"
+                            android:padding="15dp"
+                            android:id="@+id/language"
+                            android:layout_width="60dp"
+                            android:layout_height="60dp"
+                            android:background="@drawable/togolok"
+                            android:scaleType="fitCenter"
+                            android:src="@drawable/baseline_language_24"
+                            app:tint="@color/main_green" />
+                        </LinearLayout>
+                    </androidx.cardview.widget.CardView>
+
+
+                    <androidx.cardview.widget.CardView
+                        android:id="@+id/cardSeasonIcon"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="5dp"
+                        app:cardCornerRadius="12dp"
+                        app:cardBackgroundColor="@color/main_green">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:gravity="center_vertical"
+                            android:padding="15dp">
+
+                            <TextView
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:fontFamily="@font/framd"
+                                android:textColor="@color/whitish_green"
+                                android:textSize="16sp"
+                                android:id="@+id/tvSeasonIconLabel"
+                                android:text="Season Icon" />
+
+                            <CheckBox
+                                android:id="@+id/checkboxSeasonIcon"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:buttonTint="@color/whitish_green" />
+
+                        </LinearLayout>
+
+                    </androidx.cardview.widget.CardView>
 
                 </LinearLayout>
             </ScrollView>

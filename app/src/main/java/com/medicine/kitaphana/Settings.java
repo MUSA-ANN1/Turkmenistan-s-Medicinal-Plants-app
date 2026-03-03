@@ -1,6 +1,7 @@
 package com.medicine.kitaphana;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
@@ -15,6 +16,10 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.PopupWindow;
 import android.widget.TextView;
+import androidx.work.ExistingPeriodicWorkPolicy;
+import androidx.work.PeriodicWorkRequest;
+import androidx.work.WorkManager;
+import java.util.concurrent.TimeUnit;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
@@ -39,6 +44,18 @@ public class Settings extends AppCompatActivity {
 
         getWindow().setStatusBarColor(getColor(R.color.main_green));
         getWindow().setNavigationBarColor(getColor(R.color.main_green));
+
+        CheckBox checkboxSeasonIcon = findViewById(R.id.checkboxSeasonIcon);
+        SharedPreferences prefs = getSharedPreferences("settings", MODE_PRIVATE);
+
+        // Load saved state
+        checkboxSeasonIcon.setChecked(prefs.getBoolean("auto_season_icon", false));
+
+        // Listen for changes
+        checkboxSeasonIcon.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            prefs.edit().putBoolean("auto_season_icon", isChecked).apply();
+            scheduleSeasonWork(isChecked);
+        });
 
         drawerLayout = findViewById(R.id.drawer_layout);
         navigationView = findViewById(R.id.navigation_view);
@@ -246,5 +263,64 @@ public class Settings extends AppCompatActivity {
                 getResources().getIdentifier("about_app" + MainActivity.currentLanguage, "string", getPackageName())));
         menu.findItem(R.id.nav_aboutus).setTitle(getString(
                 getResources().getIdentifier("about_us" + MainActivity.currentLanguage, "string", getPackageName())));
+    }
+
+    private void scheduleSeasonWork(boolean enabled) {
+        if (enabled) {
+            String season = SeasonIconWorker.getCurrentSeason();
+            SeasonIconWorker.switchIcon(this, season);
+
+            PeriodicWorkRequest workRequest = new PeriodicWorkRequest.Builder(
+                    SeasonIconWorker.class,
+                    6, TimeUnit.HOURS)
+                    .build();
+
+            WorkManager.getInstance(this).enqueueUniquePeriodicWork(
+                    "season_icon_work",
+                    ExistingPeriodicWorkPolicy.KEEP,
+                    workRequest
+            );
+        } else {
+            WorkManager.getInstance(this).cancelUniqueWork("season_icon_work");
+
+            // ✅ Small delay before switching back to default
+            new android.os.Handler(android.os.Looper.getMainLooper()).postDelayed(() -> {
+                SeasonIconWorker.switchIcon(this, "default");
+            }, 1000); // 1 second delay
+        }
+    }
+
+    public void switchIcon(Context context, String season) {
+        String pkg = context.getPackageName();
+
+        String[] aliases = {
+                pkg + ".SplashDefault",
+                pkg + ".SplashWinter",
+                pkg + ".SplashSpring",
+                pkg + ".SplashSummer",
+                pkg + ".SplashAutumn"
+        };
+
+        String target;
+        switch (season) {
+            case "winter": target = pkg + ".SplashWinter"; break;
+            case "spring": target = pkg + ".SplashSpring"; break;
+            case "summer": target = pkg + ".SplashSummer"; break;
+            case "autumn": target = pkg + ".SplashAutumn"; break;
+            default:       target = pkg + ".SplashDefault"; break;
+        }
+
+        android.content.pm.PackageManager pm = context.getPackageManager();
+        for (String alias : aliases) {
+            int state = alias.equals(target)
+                    ? android.content.pm.PackageManager.COMPONENT_ENABLED_STATE_ENABLED
+                    : android.content.pm.PackageManager.COMPONENT_ENABLED_STATE_DISABLED;
+
+            pm.setComponentEnabledSetting(
+                    new android.content.ComponentName(pkg, alias),
+                    state,
+                    android.content.pm.PackageManager.DONT_KILL_APP
+            );
+        }
     }
 }
