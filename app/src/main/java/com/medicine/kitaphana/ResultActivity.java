@@ -94,7 +94,10 @@ public class ResultActivity extends AppCompatActivity {
             tvConfidence.setText(e.getMessage());
         }
 
-        btnBack.setOnClickListener(v -> finish());
+        btnBack.setOnClickListener(v -> {
+            finish();
+            overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+        });
     }
 
     /** Load model.tflite from assets/ */
@@ -139,5 +142,11 @@ public class ResultActivity extends AppCompatActivity {
             buf.putFloat(( pixel        & 0xFF) / 255.0f); // B
         }
         return buf;
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
     }
 }

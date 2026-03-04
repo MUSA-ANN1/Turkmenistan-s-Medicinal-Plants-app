@@ -42,16 +42,19 @@ public class AboutApp extends AppCompatActivity {
         navigationView.setNavigationItemSelectedListener(item -> {
             if (item.getItemId() == R.id.nav_home) {
                 startActivity(new Intent(this, MainActivity.class));
+                overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
                 drawerLayout.closeDrawer(GravityCompat.START);
                 finish();
                 return true;
             } else if (item.getItemId() == R.id.nav_settings) {
                 startActivity(new Intent(this, Settings.class));
+                overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
                 drawerLayout.closeDrawer(GravityCompat.START);
                 finish();
                 return true;
             } else if (item.getItemId() == R.id.nav_saved) {
                 startActivity(new Intent(this, Saved.class));
+                overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
                 drawerLayout.closeDrawer(GravityCompat.START);
                 finish();
                 return true;
@@ -60,6 +63,7 @@ public class AboutApp extends AppCompatActivity {
                 return true;
             } else if (item.getItemId() == R.id.nav_aboutus) {
                 startActivity(new Intent(this, AboutUs.class));
+                overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
                 drawerLayout.closeDrawer(GravityCompat.START);
                 finish();
                 return true;
@@ -86,5 +90,11 @@ public class AboutApp extends AppCompatActivity {
                 getResources().getIdentifier("about_app" + MainActivity.currentLanguage, "string", getPackageName())));
         menu.findItem(R.id.nav_aboutus).setTitle(getString(
                 getResources().getIdentifier("about_us" + MainActivity.currentLanguage, "string", getPackageName())));
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
     }
 }

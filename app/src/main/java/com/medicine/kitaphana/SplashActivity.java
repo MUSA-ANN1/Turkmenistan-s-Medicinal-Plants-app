@@ -72,8 +72,15 @@ public class SplashActivity extends AppCompatActivity {
             public void run() {
                 Intent intent = new Intent(SplashActivity.this, MainActivity.class);
                 startActivity(intent);
+                overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
                 finish();
             }
         }, 3000); // 4 seconds delay to appreciate the mesh effect
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
     }
 }

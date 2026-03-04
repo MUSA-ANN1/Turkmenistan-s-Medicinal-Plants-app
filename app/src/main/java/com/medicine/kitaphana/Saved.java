@@ -51,25 +51,30 @@ public class Saved extends AppCompatActivity {
         navigationView.setNavigationItemSelectedListener(item -> {
             if (item.getItemId() == R.id.nav_home) {
                 startActivity(new Intent(this, MainActivity.class));
+                overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
                 drawerLayout.closeDrawer(GravityCompat.START);
                 finish();
                 return true;
             } else if (item.getItemId() == R.id.nav_settings) {
                 startActivity(new Intent(this, Settings.class));
+                overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
                 drawerLayout.closeDrawer(GravityCompat.START);
                 finish();
                 return true;
             } else if (item.getItemId() == R.id.nav_saved) {
                 drawerLayout.closeDrawer(GravityCompat.START);
                 finish();
+                overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
                 return true;
             } else if (item.getItemId() == R.id.nav_aboutapp) {
                 startActivity(new Intent(this, AboutApp.class));
+                overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
                 drawerLayout.closeDrawer(GravityCompat.START);
                 finish();
                 return true;
             } else if (item.getItemId() == R.id.nav_aboutus) {
                 startActivity(new Intent(this, AboutUs.class));
+                overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
                 drawerLayout.closeDrawer(GravityCompat.START);
                 finish();
                 return true;
@@ -135,6 +140,7 @@ public class Saved extends AppCompatActivity {
         super.onPause();
         loadSaved(this);
         adapter.notifyDataSetChanged();
+        overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
     }
 
     private void updateDrawerMenuTitles() {

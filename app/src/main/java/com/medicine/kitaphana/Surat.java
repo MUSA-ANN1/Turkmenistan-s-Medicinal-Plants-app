@@ -133,6 +133,7 @@ public class Surat extends AppCompatActivity {
                         Intent intent = new Intent(Surat.this, ResultActivity.class);
                         intent.putExtra("image_bytes", imageBytes);
                         startActivity(intent);
+                        overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
                     }
 
                     @Override
@@ -158,5 +159,11 @@ public class Surat extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
         cameraExecutor.shutdown();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
     }
 }

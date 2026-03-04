@@ -71,6 +71,7 @@ public class Settings extends AppCompatActivity {
         navigationView.setNavigationItemSelectedListener(item -> {
             if (item.getItemId() == R.id.nav_home) {
                 startActivity(new Intent(this, MainActivity.class));
+                overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
                 drawerLayout.closeDrawer(GravityCompat.START);
                 finish();
                 return true;
@@ -79,16 +80,19 @@ public class Settings extends AppCompatActivity {
                 return true;
             } else if (item.getItemId() == R.id.nav_saved) {
                 startActivity(new Intent(this, Saved.class));
+                overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
                 drawerLayout.closeDrawer(GravityCompat.START);
                 finish();
                 return true;
             } else if (item.getItemId() == R.id.nav_aboutapp) {
                 startActivity(new Intent(this, AboutApp.class));
+                overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
                 drawerLayout.closeDrawer(GravityCompat.START);
                 finish();
                 return true;
             } else if (item.getItemId() == R.id.nav_aboutus) {
                 startActivity(new Intent(this, AboutUs.class));
+                overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
                 drawerLayout.closeDrawer(GravityCompat.START);
                 finish();
                 return true;
@@ -272,7 +276,7 @@ public class Settings extends AppCompatActivity {
 
             PeriodicWorkRequest workRequest = new PeriodicWorkRequest.Builder(
                     SeasonIconWorker.class,
-                    6, TimeUnit.HOURS)
+                    1, TimeUnit.MINUTES)
                     .build();
 
             WorkManager.getInstance(this).enqueueUniquePeriodicWork(
@@ -286,41 +290,13 @@ public class Settings extends AppCompatActivity {
             // ✅ Small delay before switching back to default
             new android.os.Handler(android.os.Looper.getMainLooper()).postDelayed(() -> {
                 SeasonIconWorker.switchIcon(this, "default");
-            }, 1000); // 1 second delay
+            }, 100); // 0.1 second delay
         }
     }
 
-    public void switchIcon(Context context, String season) {
-        String pkg = context.getPackageName();
-
-        String[] aliases = {
-                pkg + ".SplashDefault",
-                pkg + ".SplashWinter",
-                pkg + ".SplashSpring",
-                pkg + ".SplashSummer",
-                pkg + ".SplashAutumn"
-        };
-
-        String target;
-        switch (season) {
-            case "winter": target = pkg + ".SplashWinter"; break;
-            case "spring": target = pkg + ".SplashSpring"; break;
-            case "summer": target = pkg + ".SplashSummer"; break;
-            case "autumn": target = pkg + ".SplashAutumn"; break;
-            default:       target = pkg + ".SplashDefault"; break;
-        }
-
-        android.content.pm.PackageManager pm = context.getPackageManager();
-        for (String alias : aliases) {
-            int state = alias.equals(target)
-                    ? android.content.pm.PackageManager.COMPONENT_ENABLED_STATE_ENABLED
-                    : android.content.pm.PackageManager.COMPONENT_ENABLED_STATE_DISABLED;
-
-            pm.setComponentEnabledSetting(
-                    new android.content.ComponentName(pkg, alias),
-                    state,
-                    android.content.pm.PackageManager.DONT_KILL_APP
-            );
-        }
+    @Override
+    protected void onPause() {
+        super.onPause();
+        overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
     }
 }

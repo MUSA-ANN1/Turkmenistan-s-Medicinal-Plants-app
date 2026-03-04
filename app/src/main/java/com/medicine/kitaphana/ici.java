@@ -85,24 +85,29 @@ public class ici extends AppCompatActivity {
             if (item.getItemId() == R.id.nav_home) {
                 drawerLayout.closeDrawer(GravityCompat.START);
                 finish();
+                overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
                 return true;
             } else if (item.getItemId() == R.id.nav_settings) {
                 startActivity(new Intent(this, Settings.class));
+                overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
                 drawerLayout.closeDrawer(GravityCompat.START);
                 finish();
                 return true;
             } else if (item.getItemId() == R.id.nav_saved) {
                 startActivity(new Intent(this, Saved.class));
+                overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
                 drawerLayout.closeDrawer(GravityCompat.START);
                 finish();
                 return true;
             } else if (item.getItemId() == R.id.nav_aboutapp) {
                 startActivity(new Intent(this, AboutApp.class));
+                overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
                 drawerLayout.closeDrawer(GravityCompat.START);
                 finish();
                 return true;
             } else if (item.getItemId() == R.id.nav_aboutus) {
                 startActivity(new Intent(this, AboutUs.class));
+                overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
                 drawerLayout.closeDrawer(GravityCompat.START);
                 finish();
                 return true;
@@ -233,6 +238,7 @@ public class ici extends AppCompatActivity {
     protected void onPause() {
         super.onPause();
         getSharedPreferences(SEARCH_PREFS, MODE_PRIVATE).edit().putString(KEY_SEARCH_TEXT, searchEditText.getText().toString()).apply();
+        overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
     }
 
     // ---------------- HELPERS ----------------
@@ -246,6 +252,7 @@ public class ici extends AppCompatActivity {
         MainActivity.tema = key;
         MainActivity.searchedText = searchEditText.getText().toString();
         startActivity(new Intent(this, Tema.class));
+        overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
     }
 
     // ---------------- DRAWER ----------------
@@ -276,6 +283,7 @@ public class ici extends AppCompatActivity {
         int widthInPx = (int) (200 * density); // 200dp width
 
         PopupWindow popupWindow = new PopupWindow(popupView, widthInPx, RecyclerView.LayoutParams.WRAP_CONTENT, true);
+        overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
         popupWindow.setOutsideTouchable(true);
         popupWindow.setElevation(12);
         popupWindow.showAtLocation(root, Gravity.CENTER, 0, 0);
@@ -329,6 +337,7 @@ public class ici extends AppCompatActivity {
 
             applyCustomFilters(filterHeader, filterTopic, filterKey);
             popupWindow.dismiss();
+            overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
             root.removeView(overlay); // Change background to another color
             root.setBackgroundColor(ContextCompat.getColor(this, R.color.main_green));
         });
@@ -337,6 +346,7 @@ public class ici extends AppCompatActivity {
             public void onDismiss() {
                 root.removeView(overlay); // Change background to another color
                 root.setBackgroundColor(ContextCompat.getColor(root.getContext(), R.color.main_green));
+                overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
             }
         });
     }

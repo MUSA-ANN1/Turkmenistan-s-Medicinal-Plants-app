@@ -88,12 +88,14 @@ public class MainActivity extends AppCompatActivity {
         btnAI.setOnClickListener(v -> {
             Intent intent = new Intent(MainActivity.this, AI_activity.class);
             startActivity(intent);
+            overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
         });
 
         FloatingActionButton btnImage = findViewById(R.id.btn_image);
         btnImage.setOnClickListener(v -> {
             Intent intent = new Intent(MainActivity.this, Surat.class);
             startActivity(intent);
+            overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
         });
 
 
@@ -114,18 +116,22 @@ public class MainActivity extends AppCompatActivity {
                 return true;
             } else if (item.getItemId() == R.id.nav_settings) {
                 startActivity(new Intent(this, Settings.class));
+                overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
                 drawerLayout.closeDrawer(GravityCompat.START);
                 return true;
             } else if (item.getItemId() == R.id.nav_saved) {
                 startActivity(new Intent(this, Saved.class));
+                overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
                 drawerLayout.closeDrawer(GravityCompat.START);
                 return true;
             } else if (item.getItemId() == R.id.nav_aboutapp) {
                 startActivity(new Intent(this, AboutApp.class));
+                overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
                 drawerLayout.closeDrawer(GravityCompat.START);
                 return true;
             } else if (item.getItemId() == R.id.nav_aboutus) {
                 startActivity(new Intent(this, AboutUs.class));
+                overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
                 drawerLayout.closeDrawer(GravityCompat.START);
                 return true;
             } else {
@@ -203,6 +209,7 @@ public class MainActivity extends AppCompatActivity {
         kitap = getResources().getResourceEntryName(v.getId()).replace("book", "");
         saveSearchText();
         startActivity(new Intent(MainActivity.this, ici.class));
+        overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
     }
 
 
@@ -331,5 +338,6 @@ public class MainActivity extends AppCompatActivity {
     protected void onPause() {
         super.onPause();
         saveSearchText();
+        overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
     }
 }

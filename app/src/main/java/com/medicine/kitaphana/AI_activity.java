@@ -6,12 +6,20 @@ import android.animation.ObjectAnimator;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.Intent;
+import android.text.style.ReplacementSpan;
 import android.content.SharedPreferences;
+import android.graphics.Canvas;
+import android.graphics.Paint;
+import android.graphics.RectF;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
-import android.text.Spanned;
 import android.view.LayoutInflater;
+import io.noties.markwon.AbstractMarkwonPlugin;
+import io.noties.markwon.MarkwonPlugin;
+import io.noties.markwon.MarkwonVisitor;
+import io.noties.markwon.SpannableBuilder;
+import org.commonmark.node.FencedCodeBlock;
 import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,7 +31,6 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.text.HtmlCompat;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -56,62 +63,66 @@ import java.util.List;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
+import io.noties.markwon.Markwon;
+import io.noties.markwon.ext.strikethrough.StrikethroughPlugin;
+import io.noties.markwon.ext.tables.TablePlugin;
+import io.noties.markwon.syntax.Prism4jThemeDarkula;
+import io.noties.markwon.syntax.SyntaxHighlightPlugin;
+import io.noties.prism4j.Prism4j;
+
 public class AI_activity extends AppCompatActivity {
 
-    // ── Model constants ──
-    private static final String GEMINI_MODEL       = "gemini-2.5-flash-lite";
-    private static final String QAMAR_MODEL        = "Qamar2";
-    private static final String QAMAR_API_URL      = "http://api.qamar.asia:7777/v1/chat/completions";
-
-    // ── SharedPreferences key for selected model ──
+    private static final String GEMINI_MODEL        = "gemini-2.5-flash-lite";
+    private static final String QAMAR_MODEL         = "Qamar2";
+    private static final String QAMAR_API_URL       = "http://api.qamar.asia:7777/v1/chat/completions";
     private static final String PREF_SELECTED_MODEL = "selected_model";
     private static final String MODEL_GEMINI        = "gemini";
     private static final String MODEL_QAMAR         = "qamar";
 
+    private static final String APP_INFO =
+            "Türkmenistanyň Dermanlyk Ösümlikleri goşundysy barada maglumat:\n" +
+                    "Bu goşundy Türkmenistanyň dermanlyk ösümlikleri atly 16 jiltden ybarat gollanmadyr.\n" +
+                    "Diller: türkmen, iňlis, rus, ýapon, ispan.\n" +
+                    "Aýratynlyklary: internet bolmasa-da işleýär, gözleg, süzgüç, sahypa belgisi, garaňky tema, köp dilli goldaw, AI kömekçi.\n" +
+                    "Ulanylyşy: 17 jilt bar, her kitapda ösümligiň ady, beýany, ylmy ady we bejeriş ulanylşy görkezilýär.\n" +
+                    "Talyplara, mugallymlara we tebigy lukmançylyk bilen gyzyklanýanlara niýetlenendir.\n" +
+                    "Mazmuny Türkmenistanyň Milli Lideri, Gahryman Arkadag Gurbanguly Berdimuhamedowyň eserinden alyndy.";
     private static final String DEVELOPER_INFO =
             "Bu programmany Musa Annagulyýew döretdi.\n" +
                     "Musa Android developer, CS student, 3D/AR höwesjeňi.\n" +
                     "Doglan senesi: 05.10.2010;\n" +
                     "Ýaşaýan ýeri: Türkmenistan;\n" +
-                    "Okaýan mekdebi (2016-2028-nji ýyllda): Balkan welaýatynyň Balkanabat şäheriniň daşary ýurt dillerine ýöriteleşdirilen 3-nji orta mekdebiniň 10-njy \"B\" synp okuwçysy (2025-2026 ýyldaky maglumat);\n" +
-                    "Başarnyklary: Android Studio (Java/Kotlin), Jetpack Compose, AR Foundation, Python, JavaScript, HTML, CSS, 3ds Max, AutoCAD, Photoshop, Illustrator, Networking.\n" +
-                    "Çap edilen goşundylary:\n" +
-                    "- Türkmenistanyň Dermanlyk Ösümlikleri (offline kitap, 5 dil)\n" +
-                    "- Berk Bilim (mental arifmetika + karýera maslahatçysy)\n" +
-                    "Habarlaşmak: musa.annaguliev@gmail.com | Telegram: @Mu4asa | +993 61 192383 | Instagram: @musa.annaguliev";
+                    "Okaýan mekdebi (2016-2028): Balkan welaýatynyň Balkanabat şäheriniň 3-nji orta mekdebiniň 10-njy B synpy;\n" +
+                    "Başarnyklary: Android Studio (Java/Kotlin), Jetpack Compose, AR Foundation, Python, JS, HTML, CSS;\n" +
+                    "Habarlaşmak: musa.annaguliev@gmail.com\nTelegram: @Mu4asa\nInstagram: @musa.annaguliev";
 
     private static final String SYSTEM_PROMPT =
             "Seniň adyň TakykAI 🌿\n" +
                     "Sen peýdaly we dostlukly AI kömekçi.\n" +
                     "Ulanyjy haýsy dilde ýazsa şol dilde jogap ber.\n" +
                     "Jogaplaryňy Markdown formatda we emojiler bilen ýaz.\n" +
-                    "Gysgaça we anyk jogap ber.\n\n" +
-                    "Eger ulanyjy developer, Musa ýa-da programma barada sorasa şu maglumaty ulan (Musa barada hemme maglumaty ulanyjy soramasa berme, diňe gerekli (ulanyjynyň soran) maglumaty ber):\n" +
+                    "Gysgaça we anyk jogap ber.\n" +
+                    "ÜNS BER: Eger ulanyja salgy bermeli bolsa, hemişe Gysga (Inline) görnüşünde ber!!! Ulgamly (Reference) görnüşde hiç haçan berme (Ulanyjy soramadyk bolsa salgyň görnüşini aýtma)!!!\n\n" +
+                    "Eger ulanyjy bu goşundy ýa-da programma barada sorasa şu maglumaty ulan:\n" +
+                    APP_INFO + "\n\n" +
+                    "Eger ulanyjy developer ýa-da Musa barada sorasa şu maglumaty ulan (diňe soralanyny ber):\n" +
                     DEVELOPER_INFO;
 
-    // ── Slogans for the welcome animation ──
     private static final String[] SLOGANS = {
-            "TakykAI, Tiz, Takyk, Düşnükli jogaplar berýär.",
-            "TakykAI, Islendik soraglaryňyza jogap berýän.",
-            "TakykAI, Akylly kömekçiňiz, hemişe taýyn.",
-            "TakykAI, Maglumaty çalt tapyň, wagt ýitirme.",
-            "TakykAI, Soragyňyz bar bolsa, men şu ýerde.",
-            "TakykAI, Bilim bilen güýçlendirilen kömekçi.",
-            "TakykAI, Her soraga dogry jogap."
+            "TakykAI 🌿,\nTiz, Takyk, Düşnükli jogaplar berýär.",
+            "TakykAI 🌿,\nAkylly kömekçiňiz, hemişe taýyn.",
+            "TakykAI 🌿,\nMaglumaty çalt tapyň, wagt ýitirmäň.",
+            "TakykAI 🌿,\nSoragyňyz bar bolsa, TakykAI şu ýerde.",
+            "TakykAI 🌿,\nBilim bilen güýçlendirilen kömekçi.",
+            "TakykAI 🌿,\nHer soraga dogry jogap."
     };
 
-    // -------------------- Data Model --------------------
     private static class Message {
         String text;
         boolean isUser;
-
-        Message(String text, boolean isUser) {
-            this.text = text;
-            this.isUser = isUser;
-        }
+        Message(String text, boolean isUser) { this.text = text; this.isUser = isUser; }
     }
 
-    // -------------------- Fields --------------------
     private ChatFutures chat;
     private final Executor executor = Executors.newSingleThreadExecutor();
     private List<Message> messages;
@@ -127,27 +138,21 @@ public class AI_activity extends AppCompatActivity {
     private Handler sloganHandler;
     private String currentModel;
     private int currentSloganIndex = 0;
-    private boolean sloganVisible = true;
+    private boolean sloganVisible  = true;
+    private Markwon markwon;
 
-    DrawerLayout drawerLayout;
+    DrawerLayout   drawerLayout;
     NavigationView navigationView;
-    ImageView burgerIcon;
+    ImageView      burgerIcon;
 
     // -------------------- Adapter --------------------
     class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         private final List<Message> msgs;
+        ChatAdapter(List<Message> msgs) { this.msgs = msgs; }
 
-        ChatAdapter(List<Message> msgs) {
-            this.msgs = msgs;
-        }
+        @Override public int getItemViewType(int pos) { return msgs.get(pos).isUser ? 1 : 2; }
 
-        @Override
-        public int getItemViewType(int pos) {
-            return msgs.get(pos).isUser ? 1 : 2;
-        }
-
-        @NonNull
-        @Override
+        @NonNull @Override
         public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
             int layout = viewType == 1 ? R.layout.message_item_user : R.layout.message_item_ai;
             View v = LayoutInflater.from(parent.getContext()).inflate(layout, parent, false);
@@ -158,63 +163,135 @@ public class AI_activity extends AppCompatActivity {
         public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int pos) {
             Message msg = msgs.get(pos);
             if (holder instanceof AiHolder) {
+                TextView tv = ((AiHolder) holder).msg;
                 if (pos == msgs.size() - 1 && !msg.isUser) {
-                    typeTextAnimation(((AiHolder) holder).msg, markdownToSpanned(msg.text), 15);
+                    // Newest AI message: type plain chars, apply Markwon at end
+                    typeTextMarkwon(tv, msg.text, 15);
                 } else {
-                    ((AiHolder) holder).msg.setText(markdownToSpanned(msg.text));
+                    markwon.setMarkdown(tv, msg.text);
                 }
             } else {
                 ((UserHolder) holder).msg.setText(msg.text);
             }
         }
 
-        @Override
-        public int getItemCount() {
-            return msgs.size();
-        }
+        @Override public int getItemCount() { return msgs.size(); }
 
         class UserHolder extends RecyclerView.ViewHolder {
             TextView msg;
             UserHolder(View v) { super(v); msg = v.findViewById(R.id.messageText); }
         }
-
         class AiHolder extends RecyclerView.ViewHolder {
             TextView msg;
             AiHolder(View v) { super(v); msg = v.findViewById(R.id.messageText); }
         }
     }
 
-    // -------------------- Typing Animation (chat bubbles) --------------------
-    private void typeTextAnimation(TextView textView, Spanned spanned, int delayMs) {
+    // -------------------- Markwon typing animation --------------------
+    private void typeTextMarkwon(TextView textView, String fullText, int delayMs) {
         if (typingHandler != null) typingHandler.removeCallbacksAndMessages(null);
         typingHandler = new Handler(Looper.getMainLooper());
-
-        final String fullText = spanned.toString();
         final int[] index = {0};
         textView.setText("");
 
         Runnable runnable = new Runnable() {
-            @Override
-            public void run() {
+            @Override public void run() {
                 if (index[0] <= fullText.length()) {
-                    textView.setText(fullText.substring(0, index[0]));
+                    String partial = fullText.substring(0, index[0]);
+                    // Replace table blocks with plain text placeholder during typing
+                    String safePartial = replaceTablesWithPlain(partial);
+                    markwon.setMarkdown(textView, safePartial);
                     index[0]++;
                     typingHandler.postDelayed(this, delayMs);
                 } else {
-                    textView.setText(spanned);
+                    // Full render with real tables at the end
+                    markwon.setMarkdown(textView, fullText);
                 }
             }
         };
         typingHandler.post(runnable);
     }
 
-    // -------------------- Slogan Typewriter Animation --------------------
 
     /**
-     * Starts the looping slogan animation on tvSlogan.
-     * Each slogan is typed char-by-char, then the final "." blinks 3×,
-     * then we move to the next slogan.
+     * Replaces Markdown table blocks with plain text so Markwon
+     * doesn't try to render a half-typed broken table during animation.
+     * All other Markdown (headers, bold, links, etc.) stays untouched.
      */
+    private String replaceTablesWithPlain(String text) {
+        // Match table lines: lines that start and end with |
+        // Replace each table line with plain text (strip the | pipes)
+        String[] lines = text.split("\n", -1);
+        StringBuilder sb = new StringBuilder();
+        for (String line : lines) {
+            String trimmed = line.trim();
+            // Table row or separator line
+            if (trimmed.startsWith("|") || trimmed.matches("[-| :]+")) {
+                // Strip pipes and dashes, show as plain text
+                String plain = trimmed
+                        .replaceAll("\\|", " ")
+                        .replaceAll("-{2,}", " ")
+                        .replaceAll("\\s{2,}", " ")
+                        .trim();
+                if (!plain.isEmpty()) sb.append(plain).append("\n");
+            } else {
+                sb.append(line).append("\n");
+            }
+        }
+        return sb.toString();
+    }
+
+    // -------------------- Code Block Background (rounded) --------------------
+    static class CodeBlockBackgroundSpan implements android.text.style.LineBackgroundSpan {
+        private final int bgColor;
+        private final float radius;
+        private final float padding;
+        private int firstLine = -1;
+        private int lastLine  = -1;
+
+        // Store line tops/bottoms to draw one unified rect
+        private final java.util.Map<Integer, int[]> lineCoords = new java.util.HashMap<>();
+
+        CodeBlockBackgroundSpan(int bgColor, float radius, float padding) {
+            this.bgColor = bgColor;
+            this.radius  = radius;
+            this.padding = padding;
+        }
+
+        @Override
+        public void drawBackground(@NonNull android.graphics.Canvas canvas,
+                                   @NonNull android.graphics.Paint paint,
+                                   int left, int right, int top, int baseline,
+                                   int bottom, @NonNull CharSequence text,
+                                   int start, int end, int lineNumber) {
+            lineCoords.put(lineNumber, new int[]{top, bottom});
+            if (firstLine == -1 || lineNumber < firstLine) firstLine = lineNumber;
+            if (lineNumber > lastLine) lastLine = lineNumber;
+
+            // Only draw when we're on the last recorded line
+            int[] firstCoords = lineCoords.get(firstLine);
+            int[] lastCoords  = lineCoords.get(lastLine);
+
+            if (firstCoords == null || lastCoords == null) return;
+
+            android.graphics.Paint bgPaint = new android.graphics.Paint(android.graphics.Paint.ANTI_ALIAS_FLAG);
+            bgPaint.setColor(bgColor);
+            android.graphics.RectF rect = new android.graphics.RectF(
+                    left   - padding,
+                    firstCoords[0] - padding,
+                    right  + padding,
+                    lastCoords[1]  + padding
+            );
+            canvas.drawRoundRect(rect, radius, radius, bgPaint);
+        }
+    }
+
+    // Helper — add this method inside AI_activity
+    private float dpToPx(float dp) {
+        return dp * getResources().getDisplayMetrics().density;
+    }
+
+    // -------------------- Slogan animation --------------------
     private void startSloganLoop() {
         if (sloganHandler != null) sloganHandler.removeCallbacksAndMessages(null);
         sloganHandler = new Handler(Looper.getMainLooper());
@@ -224,76 +301,37 @@ public class AI_activity extends AppCompatActivity {
 
     private void animateSlogan() {
         if (!sloganVisible || tvSlogan == null) return;
-
-        String full = SLOGANS[currentSloganIndex];
-
-        // Separate body (without trailing dot) and dot
-        final String body;
-        final boolean hasDot;
-        if (full.endsWith(".")) {
-            body = full.substring(0, full.length() - 1);
-            hasDot = true;
-        } else {
-            body = full;
-            hasDot = false;
-        }
-
+        String full      = SLOGANS[currentSloganIndex];
+        final String body   = full.endsWith(".") ? full.substring(0, full.length() - 1) : full;
+        final boolean hasDot = full.endsWith(".");
         tvSlogan.setText("");
         final int[] index = {0};
-        // Type speed: ~40ms per char feels natural for big display text
-        final int charDelay = 40;
-
-        Runnable typingRunnable = new Runnable() {
-            @Override
-            public void run() {
+        Runnable r = new Runnable() {
+            @Override public void run() {
                 if (!sloganVisible) return;
                 if (index[0] <= body.length()) {
-                    tvSlogan.setText(body.substring(0, index[0]));
-                    index[0]++;
-                    sloganHandler.postDelayed(this, charDelay);
+                    tvSlogan.setText(body.substring(0, index[0]++));
+                    sloganHandler.postDelayed(this, 40);
                 } else {
-                    // Typing done — now blink the dot then proceed
-                    if (hasDot) {
-                        blinkDot(body, 0);
-                    } else {
-                        scheduleNextSlogan();
-                    }
+                    if (hasDot) blinkDot(body, 0);
+                    else        scheduleNextSlogan();
                 }
             }
         };
-        sloganHandler.post(typingRunnable);
+        sloganHandler.post(r);
     }
 
-    /**
-     * Blinks the "." at the end of the slogan 3 times (on/off each 600ms),
-     * leaves it visible at the end, then schedules the next slogan.
-     */
-    private void blinkDot(String body, int blinkCount) {
+    private void blinkDot(String body, int count) {
         if (!sloganVisible || tvSlogan == null) return;
-
-        final int totalBlinks = 3; // 3 full on-off cycles
-        final int blinkOnMs  = 600;
-        final int blinkOffMs = 600;
-
-        if (blinkCount >= totalBlinks) {
-            // Leave dot visible, then go to next
-            tvSlogan.setText(body + ".");
-            scheduleNextSlogan();
-            return;
-        }
-
-        // Show dot OFF
+        if (count >= 3) { tvSlogan.setText(body + "."); scheduleNextSlogan(); return; }
         tvSlogan.setText(body);
         sloganHandler.postDelayed(() -> {
             if (!sloganVisible) return;
-            // Show dot ON
             tvSlogan.setText(body + ".");
-            sloganHandler.postDelayed(() ->
-                    blinkDot(body, blinkCount + 1), blinkOnMs);
-        }, blinkOffMs);
+            sloganHandler.postDelayed(() -> blinkDot(body, count + 1), 600);
+        }, 600);
     }
 
-    /** Waits 800ms then advances to the next slogan */
     private void scheduleNextSlogan() {
         sloganHandler.postDelayed(() -> {
             if (!sloganVisible) return;
@@ -302,20 +340,16 @@ public class AI_activity extends AppCompatActivity {
         }, 800);
     }
 
-    /** Fades out the slogan TextView over 400ms and stops the loop */
     private void hideSloganAnimated() {
         if (tvSlogan == null || tvSlogan.getVisibility() != View.VISIBLE) return;
         sloganVisible = false;
         if (sloganHandler != null) sloganHandler.removeCallbacksAndMessages(null);
-
-        ObjectAnimator fadeOut = ObjectAnimator.ofFloat(tvSlogan, "alpha", 2.8f, 0f);
+        ObjectAnimator fadeOut = ObjectAnimator.ofFloat(tvSlogan, "alpha", 2.5f, 0f);
         fadeOut.setDuration(400);
         fadeOut.addListener(new AnimatorListenerAdapter() {
-            @Override
-            public void onAnimationEnd(Animator animation) {
+            @Override public void onAnimationEnd(Animator animation) {
                 tvSlogan.setVisibility(View.GONE);
-
-                // Restore cached chat
+                // Restore cached messages
                 String saved = sp.getString("messages", null);
                 if (saved != null) {
                     try {
@@ -325,12 +359,8 @@ public class AI_activity extends AppCompatActivity {
                             messages.add(new Message(obj.getString("text"), obj.getBoolean("isUser")));
                         }
                         adapter.notifyDataSetChanged();
-                        if (!messages.isEmpty()) {
-                            chatRecycler.scrollToPosition(messages.size() - 1);
-                        }
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
+                        if (!messages.isEmpty()) chatRecycler.scrollToPosition(messages.size() - 1);
+                    } catch (Exception e) { e.printStackTrace(); }
                 }
             }
         });
@@ -344,43 +374,99 @@ public class AI_activity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_ai);
 
+        // ── Init Markwon ──
+        // Requires a @PrismBundle annotated class for GrammarLocatorDef to be generated.
+        // Add to any class in your project:
+        //
+        //   import io.noties.prism4j.annotations.PrismBundle;
+        //   @PrismBundle(includeAll = true, grammarLocatorClassName = ".GrammarLocatorDef")
+        //   public class PrismConfig {}
+        //
+        // Also in build.gradle (app):
+        //   annotationProcessor "io.noties.markwon:syntax-highlight:4.6.2"
+        //
+        // To skip syntax highlighting temporarily, remove the SyntaxHighlightPlugin line.
+        markwon = Markwon.builder(this)
+                .usePlugin(TablePlugin.create(this))
+                .usePlugin(StrikethroughPlugin.create())
+                .usePlugin(SyntaxHighlightPlugin.create(
+                        new Prism4j(new GrammarLocatorDef()),
+                        Prism4jThemeDarkula.create()
+                ))
+                .usePlugin(io.noties.markwon.linkify.LinkifyPlugin.create())
+                .usePlugin(new AbstractMarkwonPlugin() {
+                    @Override
+                    public void configureVisitor(@NonNull MarkwonVisitor.Builder builder) {
+                        builder.on(FencedCodeBlock.class, (visitor, fencedCodeBlock) -> {
+                            final String lang = (fencedCodeBlock.getInfo() != null
+                                    && !fencedCodeBlock.getInfo().trim().isEmpty())
+                                    ? fencedCodeBlock.getInfo().trim() : "";
+                            final String code = fencedCodeBlock.getLiteral() != null
+                                    ? fencedCodeBlock.getLiteral().trim() : "";
+
+                            SpannableBuilder sb = visitor.builder();
+
+                            // ── Whole block start (label + code together for background) ──
+                            visitor.builder().append("\n");
+                            int blockStart = sb.length();
+
+                            // ── Language label ──
+                            int labelStart = sb.length();
+                            visitor.builder().append(" " + (lang.isEmpty() ? "CODE" : lang.toUpperCase()) + " \n");
+                            int labelEnd = sb.length();
+                            sb.setSpan(new android.text.style.ForegroundColorSpan(0xFFAAAAAA), labelStart, labelEnd, 0);
+                            sb.setSpan(new android.text.style.StyleSpan(android.graphics.Typeface.BOLD), labelStart, labelEnd, 0);
+                            sb.setSpan(new android.text.style.TypefaceSpan(String.valueOf(R.font.framd)), labelStart, labelEnd, 0);
+
+                            // ── Code (let SyntaxHighlightPlugin color it via its own spans later) ──
+                            visitor.builder().append(code);
+
+                            int blockEnd = sb.length();
+
+                            // ── Apply background + rounded corners to entire block ──
+                            sb.setSpan(new CodeBlockBackgroundSpan(0xFF1E1E1E, dpToPx(12), dpToPx(2)), blockStart, blockEnd, 0);
+                            sb.setSpan(new android.text.style.TypefaceSpan(String.valueOf(R.font.framd)), blockStart, blockEnd, 0);
+                            sb.setSpan(new android.text.style.RelativeSizeSpan(0.70f), blockStart, blockEnd, 0);
+
+                            visitor.builder().append("\n");
+                        });
+                    }
+                })
+                .build();
+
         drawerLayout   = findViewById(R.id.drawer_layout);
         navigationView = findViewById(R.id.navigation_view);
         burgerIcon     = findViewById(R.id.burger_icon);
         tvSlogan       = findViewById(R.id.tv_slogan);
 
         updateDrawerMenuTitles();
-
         burgerIcon.setOnClickListener(v -> drawerLayout.openDrawer(GravityCompat.START));
 
         navigationView.setNavigationItemSelectedListener(item -> {
-            if (item.getItemId() == R.id.nav_home) {
+            int id = item.getItemId();
+            drawerLayout.closeDrawer(GravityCompat.START);
+            if (id == R.id.nav_home) {
                 finish();
-                drawerLayout.closeDrawer(GravityCompat.START);
-                return true;
-            } else if (item.getItemId() == R.id.nav_settings) {
+                overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+            } else if (id == R.id.nav_settings) {
                 startActivity(new Intent(this, Settings.class));
-                drawerLayout.closeDrawer(GravityCompat.START);
+                overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
                 finish();
-                return true;
-            } else if (item.getItemId() == R.id.nav_saved) {
+            } else if (id == R.id.nav_saved)    {
                 startActivity(new Intent(this, Saved.class));
-                drawerLayout.closeDrawer(GravityCompat.START);
+                overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
                 finish();
-                return true;
-            } else if (item.getItemId() == R.id.nav_aboutapp) {
+            } else if (id == R.id.nav_aboutapp) {
                 startActivity(new Intent(this, AboutApp.class));
-                drawerLayout.closeDrawer(GravityCompat.START);
+                overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
                 finish();
-                return true;
-            } else if (item.getItemId() == R.id.nav_aboutus) {
+            } else if (id == R.id.nav_aboutus)  {
                 startActivity(new Intent(this, AboutUs.class));
-                drawerLayout.closeDrawer(GravityCompat.START);
+                overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
                 finish();
-                return true;
-            } else {
-                return false;
             }
+            else return false;
+            return true;
         });
 
         EditText userInput = findViewById(R.id.user_input);
@@ -389,12 +475,9 @@ public class AI_activity extends AppCompatActivity {
         chatRecycler       = findViewById(R.id.chatRecycler);
         btnModelSelector   = findViewById(R.id.btn_model_selector);
 
-        // ── Load saved model preference ──
         modelPrefs   = getSharedPreferences("model_prefs", MODE_PRIVATE);
         currentModel = modelPrefs.getString(PREF_SELECTED_MODEL, MODEL_GEMINI);
         updateModelButton();
-
-        // ── Model selector click → show dialog ──
         btnModelSelector.setOnClickListener(v -> showModelDialog());
 
         sp       = getSharedPreferences("chat_cache", MODE_PRIVATE);
@@ -406,32 +489,21 @@ public class AI_activity extends AppCompatActivity {
         chatRecycler.setLayoutManager(lm);
         chatRecycler.setAdapter(adapter);
 
-        // Init Gemini (always init it; we switch routing at send time)
         initGemini();
 
-
-
-        // ── Always show slogan on open, hide when user focuses EditText ──
         tvSlogan.setVisibility(View.VISIBLE);
         tvSlogan.setAlpha(1f);
         sloganVisible = true;
         startSloganLoop();
 
         userInput.setOnFocusChangeListener((v, hasFocus) -> {
-            if (hasFocus && sloganVisible) {
-                hideSloganAnimated();
-            }
+            if (hasFocus && sloganVisible) hideSloganAnimated();
         });
 
-        // Send button
         sendButton.setOnClickListener(v -> {
             String query = userInput.getText().toString().trim();
             if (query.isEmpty()) return;
-
-            // Also hide slogan if somehow still visible when send is pressed
-            if (sloganVisible) {
-                hideSloganAnimated();
-            }
+            if (sloganVisible) hideSloganAnimated();
 
             messages.add(new Message(query, true));
             adapter.notifyItemInserted(messages.size() - 1);
@@ -442,20 +514,15 @@ public class AI_activity extends AppCompatActivity {
             loadingBar.setVisibility(View.VISIBLE);
             sendButton.setEnabled(false);
 
-            // ── Route to correct model ──
-            if (currentModel.equals(MODEL_QAMAR)) {
-                sendMessageQamar(query);
-            } else {
-                sendMessageGemini(query);
-            }
+            if (currentModel.equals(MODEL_QAMAR)) sendMessageQamar(query);
+            else                                  sendMessageGemini(query);
         });
     }
 
-    // -------------------- Model Dialog --------------------
+    // -------------------- Model dialog --------------------
     private void showModelDialog() {
         String[] modelNames = {"🤖 Gemini (Google)", "🌙 Qamar AI"};
         int checkedItem = currentModel.equals(MODEL_GEMINI) ? 0 : 1;
-
         new AlertDialog.Builder(this)
                 .setTitle("AI Model saýla")
                 .setSingleChoiceItems(modelNames, checkedItem, (dialog, which) -> {
@@ -468,58 +535,36 @@ public class AI_activity extends AppCompatActivity {
                 .show();
     }
 
-    // Update button emoji/label to reflect active model
     private void updateModelButton() {
-        if (currentModel.equals(MODEL_QAMAR)) {
-            btnModelSelector.setText("🌙");
-        } else {
-            btnModelSelector.setText("🤖");
-        }
+        btnModelSelector.setText(currentModel.equals(MODEL_QAMAR) ? "🌙" : "🤖");
     }
 
     // -------------------- Init Gemini --------------------
     private void initGemini() {
-        GenerationConfig.Builder configBuilder = new GenerationConfig.Builder();
-        configBuilder.maxOutputTokens = 500;
-        configBuilder.temperature = 0.7f;
-
-        Content systemInstruction = new Content.Builder()
-                .addText(SYSTEM_PROMPT)
-                .build();
-
+        GenerationConfig.Builder cfg = new GenerationConfig.Builder();
+        cfg.maxOutputTokens = 500;
+        cfg.temperature     = 0.7f;
+        Content sys = new Content.Builder().addText(SYSTEM_PROMPT).build();
         GenerativeModel model = new GenerativeModel(
-                GEMINI_MODEL,
-                BuildConfig.GEMINI_API_KEY,
-                configBuilder.build(),
-                null,
-                new RequestOptions(),
-                null,
-                null,
-                systemInstruction
-        );
-
-        GenerativeModelFutures modelFutures = GenerativeModelFutures.from(model);
-        chat = modelFutures.startChat();
+                GEMINI_MODEL, BuildConfig.GEMINI_API_KEY,
+                cfg.build(), null, new RequestOptions(), null, null, sys);
+        chat = GenerativeModelFutures.from(model).startChat();
     }
 
     // -------------------- Send via Gemini --------------------
     private void sendMessageGemini(String query) {
         Content userContent = new Content.Builder().addText(query).build();
         ListenableFuture<GenerateContentResponse> future = chat.sendMessage(userContent);
-
         Futures.addCallback(future, new FutureCallback<GenerateContentResponse>() {
-            @Override
-            public void onSuccess(GenerateContentResponse result) {
-                String aiText = result.getText();
-                if (aiText == null) aiText = "❌ Jogap boş geldi.";
-                final String finalText = aiText;
-                runOnUiThread(() -> onAiResponse(finalText));
+            @Override public void onSuccess(GenerateContentResponse result) {
+                String t = result.getText();
+                if (t == null) t = "❌ Jogap boş geldi.";
+                final String ft = t;
+                runOnUiThread(() -> onAiResponse(ft));
             }
-
-            @Override
-            public void onFailure(@NonNull Throwable t) {
-                final String error = "❌ Haýyş edýäs, internediňizi barlaň ýa-da soňrak täzeden synanyşyň";
-                runOnUiThread(() -> onAiResponse(error));
+            @Override public void onFailure(@NonNull Throwable t) {
+                runOnUiThread(() -> onAiResponse(
+                        "❌ Haýyş edýäs, internediňizi barlaň, modeli çalşyp görüň ýa-da soňrak täzeden synanyşyň"));
             }
         }, executor);
     }
@@ -528,40 +573,26 @@ public class AI_activity extends AppCompatActivity {
     private void sendMessageQamar(String query) {
         executor.execute(() -> {
             try {
-                // Build messages array: system + conversation history + new user message
-                JSONArray messagesArray = new JSONArray();
+                JSONArray arr = new JSONArray();
+                JSONObject sys = new JSONObject();
+                sys.put("role", "system"); sys.put("content", SYSTEM_PROMPT); arr.put(sys);
 
-                // System message
-                JSONObject systemMsg = new JSONObject();
-                systemMsg.put("role", "system");
-                systemMsg.put("content", SYSTEM_PROMPT);
-                messagesArray.put(systemMsg);
-
-                // Add last 20 messages from history as context
-                int historyStart = Math.max(0, messages.size() - 20);
-                for (int i = historyStart; i < messages.size(); i++) {
+                int start = Math.max(0, messages.size() - 20);
+                for (int i = start; i < messages.size(); i++) {
                     Message m = messages.get(i);
-                    JSONObject histMsg = new JSONObject();
-                    histMsg.put("role", m.isUser ? "user" : "assistant");
-                    histMsg.put("content", m.text);
-                    messagesArray.put(histMsg);
+                    JSONObject hm = new JSONObject();
+                    hm.put("role", m.isUser ? "user" : "assistant");
+                    hm.put("content", m.text);
+                    arr.put(hm);
                 }
+                JSONObject um = new JSONObject();
+                um.put("role", "user"); um.put("content", query); arr.put(um);
 
-                // Current user message
-                JSONObject userMsg = new JSONObject();
-                userMsg.put("role", "user");
-                userMsg.put("content", query);
-                messagesArray.put(userMsg);
-
-                // Build request body
                 JSONObject body = new JSONObject();
-                body.put("model", QAMAR_MODEL);
-                body.put("messages", messagesArray);
-                body.put("max_tokens", 500);
-                body.put("temperature", 0.7);
+                body.put("model", QAMAR_MODEL); body.put("messages", arr);
+                body.put("max_tokens", 500); body.put("temperature", 0.7);
                 body.put("stream", false);
 
-                // HTTP POST
                 URL url = new URL(QAMAR_API_URL);
                 HttpURLConnection conn = (HttpURLConnection) url.openConnection();
                 conn.setRequestMethod("POST");
@@ -571,52 +602,43 @@ public class AI_activity extends AppCompatActivity {
                 conn.setConnectTimeout(15000);
                 conn.setReadTimeout(30000);
 
-                byte[] input = body.toString().getBytes(StandardCharsets.UTF_8);
                 try (OutputStream os = conn.getOutputStream()) {
-                    os.write(input);
+                    os.write(body.toString().getBytes(StandardCharsets.UTF_8));
                 }
 
-                int responseCode = conn.getResponseCode();
-                StringBuilder response = new StringBuilder();
+                int code = conn.getResponseCode();
+                StringBuilder sb = new StringBuilder();
 
-                if (responseCode == 200) {
+                if (code == 200) {
                     BufferedReader br = new BufferedReader(
                             new InputStreamReader(conn.getInputStream(), StandardCharsets.UTF_8));
                     String line;
-                    while ((line = br.readLine()) != null) response.append(line);
+                    while ((line = br.readLine()) != null) sb.append(line);
                     br.close();
-
-                    JSONObject json = new JSONObject(response.toString());
-                    String aiText = json
-                            .getJSONArray("choices")
-                            .getJSONObject(0)
-                            .getJSONObject("message")
-                            .getString("content");
-
-                    final String finalText = aiText.trim();
-                    runOnUiThread(() -> onAiResponse(finalText));
+                    String aiText = new JSONObject(sb.toString())
+                            .getJSONArray("choices").getJSONObject(0)
+                            .getJSONObject("message").getString("content");
+                    final String ft = aiText.trim();
+                    runOnUiThread(() -> onAiResponse(ft));
                 } else {
-                    // Read error body
                     BufferedReader br = new BufferedReader(
                             new InputStreamReader(conn.getErrorStream(), StandardCharsets.UTF_8));
                     String line;
-                    while ((line = br.readLine()) != null) response.append(line);
+                    while ((line = br.readLine()) != null) sb.append(line);
                     br.close();
-
-                    final String error = "❌ Haýyş edýäs, internediňizi barlaň ýa-da soňrak täzeden synanyşyň";
-                    runOnUiThread(() -> onAiResponse(error));
+                    runOnUiThread(() -> onAiResponse(
+                            "❌ Haýyş edýäs, internediňizi barlaň, modeli çalşyp görüň ýa-da soňrak täzeden synanyşyň"));
                 }
-
                 conn.disconnect();
 
             } catch (Exception e) {
-                final String error = "❌ Haýyş edýäs, internediňizi barlaň ýa-da soňrak täzeden synanyşyň";
-                runOnUiThread(() -> onAiResponse(error));
+                runOnUiThread(() -> onAiResponse(
+                        "❌ Haýyş edýäs, internediňizi barlaň, modeli çalşyp görüň ýa-da soňrak täzeden synanyşyň"));
             }
         });
     }
 
-    // -------------------- Shared response handler --------------------
+    // -------------------- Response handler --------------------
     private void onAiResponse(String text) {
         loadingBar.setVisibility(View.GONE);
         sendButton.setEnabled(true);
@@ -624,71 +646,6 @@ public class AI_activity extends AppCompatActivity {
         adapter.notifyItemInserted(messages.size() - 1);
         chatRecycler.scrollToPosition(messages.size() - 1);
         saveChatCache();
-    }
-
-    // -------------------- Markdown → Spanned --------------------
-    private Spanned markdownToSpanned(String markdown) {
-        if (markdown == null)
-            return HtmlCompat.fromHtml("", HtmlCompat.FROM_HTML_MODE_LEGACY);
-
-        String html = markdown
-                .replaceAll("(?m)^###### (.+)$", "<small><b>$1</b></small>")
-                .replaceAll("(?m)^##### (.+)$", "<b>$1</b>")
-                .replaceAll("(?m)^#### (.+)$", "<b><big>$1</big></b>")
-                .replaceAll("(?m)^### (.+)$", "<b><big><big>$1</big></big></b>")
-                .replaceAll("(?m)^## (.+)$", "<b><big><big><big>$1</big></big></big></b>")
-                .replaceAll("(?m)^# (.+)$", "<b><big><big><big><big>$1</big></big></big></big></b>")
-
-                // ─── Bold + Italic combined ───
-                .replaceAll("\\*\\*\\*(.+?)\\*\\*\\*", "<b><i>$1</i></b>")
-                .replaceAll("___(.+?)___", "<b><i>$1</i></b>")
-
-                // ─── Bold ───
-                .replaceAll("\\*\\*(.+?)\\*\\*", "<b>$1</b>")
-                .replaceAll("__(.+?)__", "<b>$1</b>")
-
-                // ─── Italic ───
-                .replaceAll("\\*(.+?)\\*", "<i>$1</i>")
-                .replaceAll("_(.+?)_", "<i>$1</i>")
-
-                // ─── Strikethrough ───
-                .replaceAll("~~(.+?)~~", "<strike>$1</strike>")
-
-                // ─── Code blocks (``` ... ```) MUST come before inline code ───
-                .replaceAll("(?s)```[a-zA-Z]*\\n(.*?)```", "<br><tt>$1</tt><br>")
-                .replaceAll("(?s)```(.*?)```", "<br><tt>$1</tt><br>")
-
-                // ─── Inline code ───
-                .replaceAll("`(.+?)`", "<tt>$1</tt>")
-
-                // ─── Blockquote ───
-                .replaceAll("(?m)^> (.+)$", "<blockquote>$1</blockquote>")
-
-                // ─── Horizontal rule ───
-                .replaceAll("(?m)^---$", "<br>──────────────<br>")
-                .replaceAll("(?m)^\\*\\*\\*$", "<br>──────────────<br>")
-                .replaceAll("(?m)^___$", "<br>──────────────<br>")
-
-                // ─── Unordered lists ───
-                .replaceAll("(?m)^[•\\-\\*] (.+)$", "&#8226; $1<br>")
-
-                // ─── Ordered lists ───
-                .replaceAll("(?m)^\\d+\\. (.+)$", "&#8226; $1<br>")
-
-                // ─── Checkboxes ───
-                .replaceAll("(?m)^- \\[x\\] (.+)$", "☑ $1<br>")
-                .replaceAll("(?m)^- \\[ \\] (.+)$", "☐ $1<br>")
-
-                // ─── Links ───
-                .replaceAll("\\[(.+?)\\]\\((.+?)\\)", "<a href=\"$2\">$1</a>")
-
-                // ─── Images (remove, TextView can't render) ───
-                .replaceAll("!\\[.*?\\]\\(.*?\\)", "")
-
-                // ─── Line breaks ───
-                .replace("\n", "<br>");
-
-        return HtmlCompat.fromHtml(html, HtmlCompat.FROM_HTML_MODE_LEGACY);
     }
 
     // -------------------- Cache --------------------
@@ -703,9 +660,7 @@ public class AI_activity extends AppCompatActivity {
                 arr.put(o);
             }
             sp.edit().putString("messages", arr.toString()).apply();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        } catch (Exception e) { e.printStackTrace(); }
     }
 
     // -------------------- Lifecycle --------------------
@@ -716,20 +671,25 @@ public class AI_activity extends AppCompatActivity {
         if (sloganHandler != null) sloganHandler.removeCallbacksAndMessages(null);
     }
 
-    private void updateDrawerMenuTitles() {
-        NavigationView navigationView = findViewById(R.id.navigation_view);
-        if (navigationView == null) return;
+    @Override
+    protected void onPause() {
+        super.onPause();
+        overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+    }
 
-        Menu menu = navigationView.getMenu();
+    private void updateDrawerMenuTitles() {
+        NavigationView nav = findViewById(R.id.navigation_view);
+        if (nav == null) return;
+        Menu menu = nav.getMenu();
         menu.findItem(R.id.nav_home).setTitle(getString(
-                getResources().getIdentifier("home" + MainActivity.currentLanguage, "string", getPackageName())));
+                getResources().getIdentifier("home"      + MainActivity.currentLanguage, "string", getPackageName())));
         menu.findItem(R.id.nav_settings).setTitle(getString(
-                getResources().getIdentifier("settings" + MainActivity.currentLanguage, "string", getPackageName())));
+                getResources().getIdentifier("settings"  + MainActivity.currentLanguage, "string", getPackageName())));
         menu.findItem(R.id.nav_saved).setTitle(getString(
-                getResources().getIdentifier("saved" + MainActivity.currentLanguage, "string", getPackageName())));
+                getResources().getIdentifier("saved"     + MainActivity.currentLanguage, "string", getPackageName())));
         menu.findItem(R.id.nav_aboutapp).setTitle(getString(
                 getResources().getIdentifier("about_app" + MainActivity.currentLanguage, "string", getPackageName())));
         menu.findItem(R.id.nav_aboutus).setTitle(getString(
-                getResources().getIdentifier("about_us" + MainActivity.currentLanguage, "string", getPackageName())));
+                getResources().getIdentifier("about_us"  + MainActivity.currentLanguage, "string", getPackageName())));
     }
 }

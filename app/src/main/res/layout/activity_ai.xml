@@ -60,7 +60,6 @@
             android:layout_marginStart="24dp"
             android:layout_marginEnd="24dp"
             android:layout_marginBottom="24dp"
-            android:text="text"
             android:gravity="center|right"
             android:textColor="@color/main_green"
             android:textSize="40sp"

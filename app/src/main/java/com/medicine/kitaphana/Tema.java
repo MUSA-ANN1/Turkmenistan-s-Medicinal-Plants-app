@@ -160,4 +160,10 @@ public class Tema extends AppCompatActivity {
 
         return spannable;
     }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+    }
 }

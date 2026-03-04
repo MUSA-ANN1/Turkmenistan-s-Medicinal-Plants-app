@@ -43,6 +43,13 @@ android {
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
     }
+
+    configurations.all {
+        resolutionStrategy {
+            force("org.jetbrains:annotations:23.0.0")
+        }
+        exclude(group = "org.jetbrains", module = "annotations-java5")
+    }
 }
 
 dependencies {
@@ -59,6 +66,14 @@ dependencies {
     implementation("androidx.camera:camera-view:1.3.1")
 
     implementation("androidx.work:work-runtime:2.9.0")
+
+    implementation("io.noties.markwon:core:4.6.2")
+    implementation("io.noties.markwon:ext-tables:4.6.2")
+    implementation("io.noties.markwon:syntax-highlight:4.6.2")
+    implementation("io.noties.markwon:ext-strikethrough:4.6.2")
+    implementation("io.noties.markwon:linkify:4.6.2")
+    annotationProcessor("io.noties.markwon:syntax-highlight:4.6.2")
+    annotationProcessor("io.noties:prism4j-bundler:2.0.0")
 
     implementation(libs.appcompat)
     implementation(libs.material)

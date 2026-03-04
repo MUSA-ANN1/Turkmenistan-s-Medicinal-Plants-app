@@ -1,13 +1,40 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <style name="Base.Theme.Kitaphana" parent="Theme.Material3.DayNight.NoActionBar">
         <item name="android:src">#DADDE2</item>
+
+
         <item name="colorPrimary">@color/main_green</item>
         <item name="colorPrimaryVariant">@color/main_green</item>
-        <item name="colorOnPrimary">@color/white</item>
+        <!--        <item name="colorOnPrimary">@color/white</item>-->
+
+        <item name="colorSecondary">@color/main_green</item>
+        <item name="colorSecondaryVariant">@color/main_green</item>
+        <item name="colorOnSecondary">@color/main_green</item>
+
+        <item name="colorTertiary">@color/main_green</item>
+        <item name="colorTertiaryContainer">@color/main_green</item>
+        <!--<item name="colorOnTertiary">@color/white</item>
+
+        <item name="colorSurface">@color/white</item>
+        <item name="colorOnSurface">@color/black</item>
+-->
+
+        <item name="colorControlActivated">@color/main_green</item>
+        <item name="colorControlNormal">@color/main_green</item>
+        <item name="colorControlHighlight">@color/main_green</item>
+
+        <item name="android:actionModeBackground">@color/main_green</item>
+        <item name="actionModeBackground">@color/main_green</item>
+
         <item name="android:statusBarColor">@color/main_green</item>
         <item name="android:navigationBarColor">@color/main_green</item>
-        <item name="android:windowDrawsSystemBarBackgrounds">true</item>
-        <item name="android:windowTranslucentStatus">false</item>
+        <!--        <item name="android:windowDrawsSystemBarBackgrounds">true</item>
+                <item name="android:windowTranslucentStatus">false</item>
+                <item name="android:windowActionModeOverlay">true</item>
+                <item name="windowActionModeOverlay">true</item>
+
+                <item name="android:textSelectHandle">@color/main_green</item>-->
+        <item name="colorAccent">@color/text_color3</item>
     </style>
 
     <style name="Theme.Kitaphana" parent="Base.Theme.Kitaphana" />
@@ -19,31 +46,3 @@
         <item name="android:navigationBarColor">@color/app_icon_c</item>
     </style>
 </resources>
-
-
-    <!--
-    <resources xmlns:tools="http://schemas.android.com/tools">
-
-        <style name="Base.Theme.Kitaphana" parent="Theme.Material3.DayNight.NoActionBar">
-    &lt;!&ndash;        <item name="colorControlActivated">@color/main_green</item>
-            <item name="android:statusBarColor">@color/main_green</item>
-            <item name="android:navigationBarColor">@color/main_green</item>&ndash;&gt;
-            <item name="android:src">#DADDE2</item>
-        </style>
-
-        <style name="Theme.Kitaphana" parent="Base.Theme.Kitaphana" />
-    </resources>
-    -->
-
-<!--<resources xmlns:tools="http://schemas.android.com/tools">
-<style name="Base.Theme.Kitaphana" parent="Theme.Material3.DayNight.NoActionBar">
-    &lt;!&ndash;<item name="colorSurface">@color/main_green</item>&ndash;&gt;
-    <item name="android:colorBackground">@color/main_green</item>
-    <item name="android:src">#DADDE2</item>&lt;!&ndash;
-        <item name="android:statusBarColor">@color/main_green</item>
-        <item name="android:navigationBarColor">@color/main_green</item>
-        <item name="android:windowLightStatusBar">true</item>&ndash;&gt;
-</style>
-
-<style name="Theme.Kitaphana" parent="Base.Theme.Kitaphana" />
-</resources>-->
