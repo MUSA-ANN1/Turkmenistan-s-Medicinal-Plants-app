@@ -18,7 +18,8 @@ An **exhaustive offline compendium of herbal therapeutics**, comprising **16 vol
 - 🗣️ **Comprehensive multilingual support:** Turkmen, English, Russian, Japanese, Spanish  
 - 🧬 **Detailed phytological profiles** including scientific classification and therapeutic applications  
 - 🟢 **Elegant, verdant UI** optimized for prolonged reading  
-- 🤖 **AI-Driven Semantic Assistance powered by Gemini AI and Qamar AI**, enabling **context-aware clarifications**, **concise interpretations**, and **intelligent guidance** on medicinal plants  
+- 🤖 **AI-Driven Semantic Assistance powered by Gemini AI and Qamar AI**, enabling **context-aware clarifications**, **concise interpretations**, and **intelligent guidance** on medicinal plants
+- 📷 **On-device plant recognition** implemented using TensorFlow Lite and Google Teachable Machine — feature later sunset to improve app stability and user experience
 
 ---
 
@@ -30,6 +31,9 @@ Download the app on **Google Play:**
 
 ## 🛠️ Technologies Utilized
 - **Android Studio** for development and compilation  
+- **Java** for core application logic
+- **TensorFlow Lite** for on-device plant recognition  
+- **Gemini AI & Qamar AI** for intelligent assistant features  
 - **All textual data stored in `strings.xml`** to facilitate localization and maintainability  
 
 ---
