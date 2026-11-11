@@ -64,15 +64,6 @@ This application is meticulously designed for **middle, high school, and univers
 
 ---
 
-## 📫 Contact
-**Portifolio Web Site:** <a href="https://musa-ann1.github.io/My-portifolio-webSite">Link</a>  
-**Email:** musa.annaguliev@gmail.com  
-**Instagram:** <a href="https://www.instagram.com/musa.annaguliev">musa.annaguliev</a>  
-**Telegram:** <a href="https://t.me/Mu4asa">𝓜𝓾𝓼𝓪</a>  
-**IMO:** <a href="https://s.imoim.net/spEXKo">M.</a>  
-
----
-
 ## 🏛️ Credits / Notes
 All medicinal plant content is sourced from the **masterpiece of  
 Turkmenistan's National Leader,  
