@@ -1,71 +1,41 @@
-# 🌿 Türkmenistanyň Dermanlyk Ösümlikleri 📚
-An **exhaustive offline compendium of herbal therapeutics**, comprising **16 volumes** of "Türkmenistanyň dermanlyk ösümlikleri". This application facilitates **multilingual exploration** in **Turkmen, English, Russian, Japanese, and Spanish**, providing both scholarly and practical insights into medicinal flora. Ideal for students, researchers, and practitioners of natural medicine.  
+# Türkmenistanyň Dermanlyk Ösümlikleri
+
+An Android application for exploring information about medicinal plants found in Turkmenistan. The app provides plant descriptions and related information in Turkmen, English, Russian, Japanese, and Spanish. It is designed as an offline reference for students and anyone interested in Turkmenistan's plant life.
+
 <div align="center">
   <img src="screen1.png" width="150" height="300" style="margin: 10px">
   <img src="screen 2.png" width="150" height="300" style="margin: 10px">
 </div>
 
----
+## Features
 
-## ⚡ Features
-- 🌐 **Complete offline accessibility** – uninterrupted exploration without internet  
-- 🔍 **Advanced search and filtering** across all volumes  
-- ✏️ **Highlighted search results** for precise referencing  
-- 💾 **Bookmark and save** essential entries  
-- 🌙 **Dark mode interface** for optimal ocular comfort  
-- ✋ **Dynamic text resizing** via pinch gestures (plant info pages)  
-- 📖 **Selectable text** for academic or personal use  
-- 🗣️ **Comprehensive multilingual support:** Turkmen, English, Russian, Japanese, Spanish  
-- 🧬 **Detailed phytological profiles** including scientific classification and therapeutic applications  
-- 🟢 **Elegant, verdant UI** optimized for prolonged reading  
-- 🤖 **AI-Driven Semantic Assistance powered by Gemini AI and Qamar AI**, enabling **context-aware clarifications**, **concise interpretations**, and **intelligent guidance** on medicinal plants
-- 📷 **On-device plant recognition** using TensorFlow Lite and Google Teachable Machine
+- Browse medicinal plant information offline.
+- Search and filter plant entries.
+- View highlighted search results.
+- Save entries for quick access.
+- Switch between light and dark themes.
+- Resize text with pinch gestures on plant information pages.
+- Select and copy text.
+- Use the app in five languages: Turkmen, English, Russian, Japanese, and Spanish.
+- Ask the AI assistant questions about plant information.
+- Recognize plants using the device camera.
 
----
+## Download
 
-## 📲 Play Store
-Download the app on **Google Play:**  
-[Download Here](https://play.google.com/store/apps/details?id=com.medicine.kitaphana)
+The app is available on Google Play:
 
----
+[Download Türkmenistanyň Dermanlyk Ösümlikleri](https://play.google.com/store/apps/details?id=com.medicine.kitaphana)
 
-## 🛠️ Technologies Utilized
-- **Android Studio** for development and compilation  
-- **Java** for core application logic
-- **TensorFlow Lite** for on-device plant recognition  
-- **CameraX** for camera integration  
-- **Gemini AI & Qamar AI** for intelligent assistant features  
-- **All textual data stored in `strings.xml`** to facilitate localization and maintainability  
+## Technologies
 
----
+- Java
+- Android Studio
+- TensorFlow Lite
+- CameraX
+- Gemini API
 
-## 📝 Usage / Functional Overview
-This application is meticulously designed for **middle, high school, and university students**, as well as **anyone pursuing herbal therapeutics**:  
-- On launch, users encounter **16 comprehensive herbal volumes**  
-- Users may **search, filter, and select** any book for detailed study  
-- Each book contains **informational cards** encompassing:  
-  - Plant name  
-  - Comprehensive description  
-  - Scientific taxonomy  
-  - Medicinal applications  
+## About the Content
 
-💡 **Practical Applications:**  
-- Academic preparation and competitions  
-- Formulation of natural remedies  
-- Economical alternatives to conventional pharmaceuticals  
-- Guidance for caregivers seeking cost-effective medicinal solutions  
+The plant information is based on the book series *Türkmenistanyň Dermanlyk Ösümlikleri* by Gurbanguly Berdimuhamedow.
 
----
-
-## 🚀 Future Enhancements / Roadmap
-- 🔊 **Text-to-Speech integration** for visually impaired users  
-- 🤖 **Retrieval-Augmented Generation (RAG)** for intelligent queries on plant-based remedies directly from the volumes  
-- 🔬 **Expanded AI Proficiency using Gemini AI and Qamar AI**, enabling **nuanced phytological interpretations**, **evidence-based suggestions**, and **scholarly-grade reasoning** on herbal properties  
-
----
-
-## 🏛️ Credits / Notes
-All medicinal plant content is sourced from the **masterpiece of  
-Turkmenistan's National Leader,  
-Hero Arkadag,  
-Gurbanguly Berdimuhamedow**.
+The app is intended for educational and reference purposes. It is not a substitute for professional medical advice, diagnosis, or treatment.
